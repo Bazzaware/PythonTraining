@@ -1,0 +1,170 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>3. Functions &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. Classes and Instances" href="exercise-4.html" />
+    <link rel="prev" title="2. Collections and Containers" href="exercise-2.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="functions">
+<h1>3. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<p>Functions are the basic bulding block of resuable code. They allow us to reuse code code without having to duplicate code everywhere.For examle writing similar files out with different filenames or perform the same kinds of data processing with slightly different input.</p>
+<p>Python comes with a whole bunch of useful functions available to you. Some of those are built-in (like <code class="docutils literal notranslate"><span class="pre">dir</span></code> which we’ve used) and some are in the parts of Python called the standard library. This is a series of modules, libraries, available to you to import and use in your code. This is why describe Python as coming “batteries included”. For example the <code class="docutils literal notranslate"><span class="pre">sin</span></code> and <code class="docutils literal notranslate"><span class="pre">cos</span></code> functions from the <code class="docutils literal notranslate"><span class="pre">math</span></code> module:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+<span class="go">0.8939966636005579</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sin</span></code> is a function that lives inside the math module. It takes one argument, performs a calculation and returns a result. It’s way more convenient to have this function available to us for re-use rather than having to repeat the calculation everywhere we need to use it.</p>
+<p>Python functions are very easy to create. They start with the <code class="docutils literal notranslate"><span class="pre">def</span></code> keyword followed by the function name, then any parameters they take inside parentheses and a colon to indicate that they start a new block. The parameters become local variables that only live <em>inside the body of the function</em>. When the calculation is done the function can (optionally) return one or more results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="n">argument1</span><span class="p">,</span> <span class="n">argument2</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">argument1</span> <span class="o">+</span> <span class="n">argument2</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+<p>Once defined the function can be called multiple times with different values:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="s2">&quot;goodbye&quot;</span><span class="p">)</span>
+<span class="go">&quot;hellogoodbye&quot;</span>
+</pre></div>
+</div>
+<p>The really interesting thing is that the variables defined inside the function only live inside the function and don’t affect variables with the same name outside the function. Variables inside the function are said to have “local scope” (they live locally in the function) and ones outside the function have “global scope”. Functions can use (but not change) global variables, but outside the function we can’t use local variables.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">argument1</span> <span class="o">=</span> <span class="s2">&quot;fish&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argument1</span>
+<span class="go">&quot;fish&quot;</span>
+</pre></div>
+</div>
+<p>Some functions do things (called side-effects) but don’t necessarily return values. A return statement on its own, or even a function that drops off the end with no return statement at all has an implicit return value called <code class="docutils literal notranslate"><span class="pre">None</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> is often used as a placeholder value to represent nothing. Often used to initialise variables that will be filled in later. These three functions are exactly equivalent. Try playing with <code class="docutils literal notranslate"><span class="pre">None</span></code> at the interactive interpreter and see what you can do with it (hint: not much). If you’ve heard of “null pointer exceptions” in other languages Python lets you do the same terrible things with <code class="docutils literal notranslate"><span class="pre">None</span></code>. It really does make a very convenient placeholder at times though.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">argument</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+    <span class="k">return</span>
+
+<span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">argument</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">functin</span><span class="p">(</span><span class="n">argument</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">None</span>
+</pre></div>
+</div>
+<p>Functions can also return more than one value:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="n">argument</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">argument</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">argument</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result1</span>
+<span class="go">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result2</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Interfaces and APIs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-2.html" title="previous chapter">2. Collections and Containers</a></li>
+      <li>Next: <a href="exercise-4.html" title="next chapter">4. Classes and Instances</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-3.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

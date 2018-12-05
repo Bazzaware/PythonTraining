@@ -1,0 +1,79 @@
+12 Composition and Delegation
+=============================
+
+One of the common ways for a framework or library to define an interface is to provide
+an abstract base class to inherit from. This will provide all the methods of the interface
+but they will all raise ``NotImplementedError`` if called.
+
+In your "concrete" implementation of the abstract class, you fill in all the methods.
+
+In this exercise we're going to add to our ``LocationStore`` the ability to display
+locations in a variety of different formats: csv, text and html.
+
+We'll do this using composition, ``LocationStore`` will have a formatter object which
+it delegates the formatting to.
+
+The abstract base class for the formatter is this:
+
+.. code-block:: python
+
+    class Formatter:
+        def headings(self, headers):
+            '''
+            Emit the headers
+            '''
+            raise NotImplementedError()
+
+        def row(self, rowdata):
+            '''
+            Emit a single row of table data
+            '''
+            raise NotImplementedError()
+
+We can write various subclasses of ``Formatter`` to provide different types of formatting.
+Here's an example formatter that outputs html:
+
+.. code-block:: python
+
+    class HTMLFormatter(Formatter):
+        '''
+        Output data in HTML format.
+        '''
+        def headings(self, headers):
+            print('<tr>', end='')
+            for h in headers:
+                print('<th>{}</th>'.format(h), end='')
+            print('</tr>')
+
+        def row(self, rowdata):
+            print('<tr>', end='')
+            for d in rowdata:
+                print('<td>{}</td>'.format(d), end='')
+            print('</tr>')
+
+Can you write implementations of new formatters that output in text format and csv format?
+
+This will be another example of polymorphism; three different classes all implementing the
+same interface and able to be used in place of each other with no difference to the caller.
+
+We can then have a function to choose a formatter based on a selection from the user. For
+example:
+
+.. code-block:: python
+
+    def create_formatter(name):
+        '''
+        Create an appropriate formatter given an output format name
+        '''
+        if name == 'txt':
+            return TextFormatter()
+        elif name == 'csv':
+            return CSVFormatter()
+        elif name == 'html':
+            return HTMLFormatter()
+        else:
+            raise RuntimeError('Unknown format {}'.format(name))
+
+So all that remains is to hook this into the ``LocationStore`` class, the initialiser
+method could take a formatter name parameter to pick the formatter, and provide a
+method that delegates printing the locations to the formatter.

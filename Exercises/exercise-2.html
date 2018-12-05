@@ -1,0 +1,250 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2. Collections and Containers &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Functions" href="exercise-3.html" />
+    <link rel="prev" title="1. Numbers and Strings" href="exercise-1.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="collections-and-containers">
+<h1>2. Collections and Containers<a class="headerlink" href="#collections-and-containers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-list">
+<h2>The List<a class="headerlink" href="#the-list" title="Permalink to this headline">¶</a></h2>
+<p>Lists are an extremely powerful and flexible container type. Sometimes called arrays in other languages. They don’t have a fixed length (they grow and shrink as you add and remove items) and they can contain objects of any type.</p>
+<p>Start by creating an empty list and add to it with the <code class="docutils literal notranslate"><span class="pre">append</span></code> method:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;fish&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span>
+<span class="go">[&quot;fish&quot;]</span>
+</pre></div>
+</div>
+<p>Try adding a bunch of things to the list and see how the length changes in the way you’d expect. Once you’ve got a list with several items in it you can pull them out by position using indexing. Indexing starts at position zero:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&quot;fish&quot;</span>
+</pre></div>
+</div>
+<p>See what happens if you try to lookup a position off the end of the list.</p>
+<p>You can also index from the end of the list (backwards!) using negative numbers. Try it!</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&quot;ham&quot;</span>
+</pre></div>
+</div>
+<p>As well as fetching items out by position (index) you can also change items. This is another kind of assignment, like assigning to a variable.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bacon&quot;</span>
+</pre></div>
+</div>
+<p>Try changing several of the items in your list and then verify they’ve changed by fetching them back out again.</p>
+<p>We can also delete entries from a list. Notice how deleting an item doesn’t leave an empty gap, all the other entries “shuffle down”:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ham&quot;</span><span class="p">,</span> <span class="s2">&quot;bacon&quot;</span><span class="p">,</span> <span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;fish&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&quot;bacon&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">my_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&quot;eggs&quot;</span>
+</pre></div>
+</div>
+<p>As well as deleting items in a list you might want to insert a new item. We know we can add items to the end of the list, what about putting an item at the start or even in the middle? Lists have the <code class="docutils literal notranslate"><span class="pre">insert</span></code> method for just this purpose. It takes the position (index) you want to insert the item at and the item itself. To put something right at the start of the list you use index 0.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;apple&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Often we want to process entries in a list one at a time. There are various ways of doing this, including the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ham&quot;</span><span class="p">,</span> <span class="s2">&quot;bacon&quot;</span><span class="p">,</span> <span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;fish&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">my_list</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There’s also handy method called <code class="docutils literal notranslate"><span class="pre">pop</span></code> that will “pop off” the last entry of the list and give it to us.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ham&quot;</span><span class="p">,</span> <span class="s2">&quot;bacon&quot;</span><span class="p">,</span> <span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;fish&quot;</span><span class="p">]</span>
+<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">my_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another very important operation you might need to perform on a list is to check if a value is contained inside it. The way to do that is to use the <code class="docutils literal notranslate"><span class="pre">in</span></code> operator. This returns True or False. It works by searching the list from start to end, called a “linear search”. For very long lists this can be slow (maybe whole milliseconds!), so if this is something you’re going to do a lot it may be better to use a dictionary instead where it’s much quicker to check if it contains a value. Checking for membership in a list is still very common.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ham&quot;</span><span class="p">,</span> <span class="s2">&quot;bacon&quot;</span><span class="p">,</span> <span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;fish&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;ham&quot;</span> <span class="ow">in</span> <span class="n">my_list</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;apple&quot;</span> <span class="ow">in</span> <span class="n">my_list</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>As this is an operator we can use it in conditional statements:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">&quot;apple&quot;</span> <span class="ow">in</span> <span class="n">my_list</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;We have an apple!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It’s worth noting that lists and strings are both examples of sequences and so they have some things in common. We can index a string to find the character at a certain position (not particularly useful!). More importantly, and definitely very useful, we can use the “in” operator on strings:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;Some data we got from somewhere: fish&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;fish&quot;</span> <span class="ow">in</span> <span class="n">string</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;eggs&quot;</span> <span class="ow">in</span> <span class="n">string</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>There’s a very important difference between strings and lists though (as well as the fact that they’re different datatypes). We can change a list by adding new entries, deleting entries and changing entries. This is because lists are “mutable”, they can change. Strings are immutable, once they’re created you can’t change them. See what happens if you try:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;Some data we got from somewhere&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&#39;S&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;eggs&quot;</span>
+</pre></div>
+</div>
+<p>Lists have lots of other useful methods. There’s a handy list of some of the most important ones, with examples, here: <a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html">https://docs.python.org/3/tutorial/datastructures.html</a></p>
+</div>
+<div class="section" id="the-dictionary">
+<h2>The Dictionary<a class="headerlink" href="#the-dictionary" title="Permalink to this headline">¶</a></h2>
+<p>Dictionaries are perhaps the most important container type in Python. They’re sometimes called “maps”, or in computer science “hash tables” or “associative arrays”. They map keys to values. They let us put data into a dictionary with a key and then fetch them back out again. They’re a useful way of grouping related data where we can refer to each entry by a name, instead of by an index as we did with the list. The key can be any “immutable” value, anything that can’t change. It’s very common to use strings as the keys. A dictionary with strings as keys is mapping of names to values. The variables inside a program are a mapping of names to values as well, perhaps you can imagine how Python uses dictionaries under the covers. For this reason they’re very well optimised.</p>
+<p>Dictionaries are created with the “curly brace” syntax. Values can be added and removed using syntax that looks like indexing a list. We can use this syntax to change an existing value or to add a new one:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;eggs&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;bacon&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;ham&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;eggs&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;ham&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;ham&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;ham&#39;</span><span class="p">]</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;fish&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;fish&#39;</span><span class="p">]</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+<p>What happens when you try to fetch a value out of the dictionary that isn’t there?</p>
+<p>Dictionaries also support the <code class="docutils literal notranslate"><span class="pre">in</span></code> operator. With a list Python has to do a “linear search” (checking each entry one by one) to see if a member is contained in it. Dictionaries use a hash table (magic!) and so checking if a key is present in a dictionary or not is very efficient. If you’re going to be checking membership often a dictionary is much more efficient than a list. As dictionaries store values by name they’re also nice and human friendly, code that fetches things out by name is nice and readable.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">my_dict</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">33</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">my_dict</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;bar&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">my_dict</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Dictionaries also support the <code class="docutils literal notranslate"><span class="pre">del</span></code> operator.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">my_dict</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>We can ask how many entries there are in a dictionary using <code class="docutils literal notranslate"><span class="pre">len</span></code>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">my_dict</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>For a list of all the entries in a dictionary we have the <code class="docutils literal notranslate"><span class="pre">keys</span></code>, <code class="docutils literal notranslate"><span class="pre">values</span></code> and
+<code class="docutils literal notranslate"><span class="pre">items</span></code> methods. Have a play with them and see if you can understand what they do.</p>
+<p>We can also nest dictionaries with dictionaries and lists to build more complex data
+structures. This is one of the ways programs represent complex real world data.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Collections and Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-list">The List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-dictionary">The Dictionary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Interfaces and APIs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-1.html" title="previous chapter">1. Numbers and Strings</a></li>
+      <li>Next: <a href="exercise-3.html" title="next chapter">3. Functions</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-2.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

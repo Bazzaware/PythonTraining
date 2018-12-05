@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1. Numbers and Strings &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Collections and Containers" href="exercise-2.html" />
+    <link rel="prev" title="0. IDLE &amp; the Interactive Interpreter" href="exercise-0.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="numbers-and-strings">
+<h1>1. Numbers and Strings<a class="headerlink" href="#numbers-and-strings" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="numbers">
+<h2>Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h2>
+<p>Let’s write a simple Python program that converts a weight in stones and pounds (good old English measurements) into new-fangled kilograms.</p>
+<p>A stone is fourteen pounds, and 2.2 pounds make a kilogram.</p>
+<p>Given a weight in stones and pounds, how would you turn this into kilograms using Python?</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stones</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pounds</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kilograms</span> <span class="o">=</span> <span class="n">XXXX</span>
+</pre></div>
+</div>
+<p>There’s a clue as a comment in this page, if you use the “Page Source” link right at the bottom of the page.</p>
+<p>Both stones and pounds are integers in this example. What number type would you expect the kilogram result to be, and why?</p>
+<p>The formula for the area of a circle is pi * radius squared. If we have a circle with a radius of 5 metres, can you use Python to calculate its area?</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You can get the value of pi from the math module.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+</pre></div>
+</div>
+<p>The square root function is also available in the math module:</p>
+<div class="last highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+</div>
+<p>How about the other way round, given a circle of area 50 metres squared can you work out its radius?</p>
+</div>
+<div class="section" id="running-to-the-moon">
+<h2>Running to the Moon<a class="headerlink" href="#running-to-the-moon" title="Permalink to this headline">¶</a></h2>
+<p>Jack is exercising and would like to run to the moon. Every time he goes on a run he gets ten percent faster, so he runs ten percent further than before. He starts running at ten miles an hour for one hour every day. The total distance to the moon is 238, 900 miles. Can you calculate how many days it will take before he has run the distance to the moon?</p>
+<p>Here’s an outline of the program for you to fill in. Copy and paste it into your code editor and edit it until it runs successfully.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">distance_per_day</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">distance_to_the_moon</span> <span class="o">=</span> <span class="mi">238900</span>
+<span class="n">total_run</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">while</span> <span class="n">total_run</span> <span class="o">&lt;</span> <span class="n">distance_to_the_moon</span><span class="p">:</span>
+    <span class="n">total_run</span> <span class="o">=</span> <span class="n">XXX</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="n">XXXX</span>
+    <span class="n">distance_per_day</span> <span class="o">=</span> <span class="n">XXXXX</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">days</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">total_run</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the “<code class="docutils literal notranslate"><span class="pre">round()</span></code>” function can you format the output of the total distance run to two decimal places. <code class="docutils literal notranslate"><span class="pre">help(round)</span></code> should give you a clue on how to use it.</p>
+<p>The output of <code class="docutils literal notranslate"><span class="pre">total_run</span></code> is a floating point number. How would you convert that to an integer?</p>
+</div>
+<div class="section" id="strings-and-string-methods">
+<h2>Strings and String Methods<a class="headerlink" href="#strings-and-string-methods" title="Permalink to this headline">¶</a></h2>
+<p>Strings are the type that Python uses to represent text. You create them with quotation marks.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;Some text&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;More text&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Or even triple quotes</span>
+<span class="gp">... </span><span class="s2">for multi line strings&quot;&quot;&quot;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">Some text</span>
+</pre></div>
+</div>
+<p>Here the strings x, y and z are <em>objects</em>. They have a value and some ways of working with that data. This is really the core concept of objects. They “encapsulate” data along with behaviour.</p>
+<p>For example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="go">&#39;SOME TEXT&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">upper</span></code> method on strings returns a new string all in upper case, no great surprise. The interesting thing here is that the “upper” method is attached to the string. It is bundled up with the string. We access it as an “attribute” of the string, using the “dot operator”. Use <code class="docutils literal notranslate"><span class="pre">dir(x)</span></code> to see some of the other attributes and methods available on the string.</p>
+<p>Can you write a program that when run will ask the user their name, their age and their place of birth and then print out a personalised greeting based on their answers.</p>
+<p>Strings can be added together using “+”.</p>
+<p>Here’s an example to get you started:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;What is your name? &quot;</span><span class="p">)</span>
+<span class="n">greeting</span> <span class="o">=</span> <span class="s2">&quot;Hello &quot;</span> <span class="o">+</span> <span class="n">name</span>
+<span class="k">print</span><span class="p">(</span><span class="n">greeting</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Extend this to produce the whole greeting.</p>
+<p>Next let’s produce the greeting using a multiline string (with triple quotes) and string formatting. Here’s an example template for the multiline greeting:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">greeting</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Hello {}.</span>
+<span class="s2">Your age is {}.</span>
+<span class="s2">Your place of birth is {}.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Can you rewrite this template to fit all one line, using <code class="docutils literal notranslate"><span class="pre">\n</span></code> escape codes instead of a multiline string?</p>
+<p>Can you convert the name and place of birth to all upper case letters before printing? The method that does this is on one of the slides, but if you can’t remember it you can use <code class="docutils literal notranslate"><span class="pre">dir</span></code> or <code class="docutils literal notranslate"><span class="pre">help</span></code> for a reminder of the methods available on strings.</p>
+<p>The example of string formatting we used here uses “{}” as a placeholder for values to be filled in. String formatting in Python is very powerful and has lots of different ways it can be used. Here’s another couple of examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;This string has {0} different {1} referenced by {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;several&quot;</span><span class="p">,</span> <span class="s2">&quot;placeholders&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">)</span>
+<span class="s2">&quot;This string uses {first} and {second} {third}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="s2">&quot;names&quot;</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="s2">&quot;keyword&quot;</span><span class="p">,</span> <span class="n">third</span><span class="o">=</span><span class="s2">&quot;arguments&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to use actual braces in a string where you’re doing formatting you double them up to escape them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;This will be filled in {}. This won&#39;t {{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;with something&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Numbers and Strings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#numbers">Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-to-the-moon">Running to the Moon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#strings-and-string-methods">Strings and String Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Interfaces and APIs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-0.html" title="previous chapter">0. IDLE &amp; the Interactive Interpreter</a></li>
+      <li>Next: <a href="exercise-2.html" title="next chapter">2. Collections and Containers</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-1.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

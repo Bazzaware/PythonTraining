@@ -1,0 +1,162 @@
+6. Types, Properties and Private Members
+========================================
+
+By default everything in Python is accessible, there is no notion of "private" members
+built-in to the language. Some people think this makes Python a dangerous language to
+use.
+
+Privacy and encapsulation is not just about hiding access to fields (another term for
+attributes) but also about hiding implementation details which can include methods.
+Methods and attributes you expect to be accessed by users of an object form the
+"public API" (Application Programming Interface). Implementation details, the parts
+of the object used internally but not useful for users of the code, are the "private API".
+
+In Python by default everything is open, any attribute can be looked at and can be changed.
+Because Python is dynamically typed, the types of objects are checked when the code is
+actually run ("at runtime") attributes can be set to an unexpected type and the error
+might not show up until later.
+
+.. code-block:: pycon
+
+  >>> class Thing:
+  ...     def __init__(self, number):
+  ...         self.number = number
+  ...     def add(self, another_number):
+  ...         return self.number + another_number
+  ...
+  >>> thing = Thing('not a number!')
+  >>> thing.add(3)
+  Traceback (most recent call last):
+    ...
+  TypeError: cannot concatenate 'str' and 'int' objects
+  >>> thing2 = Thing(7)
+  >>> thing2.number
+  7
+  >>> thing2.number = 'nope, not a number either'
+  >>> thing2.add(3)
+  Traceback (most recent call last):
+    ...
+  TypeError: cannot concatenate 'str' and 'int' objects
+
+There's two issues here. One is the fact that ``number`` can be set from the
+outside and the other is that when we create a ``Thing`` we can pass in the wrong type
+of object. In Python too much type checking is frowned on, because it restricts how
+your code can be used. Because of the dynamic typing Python is much more concerned
+with object behaviour rather than type. This is a concept called duck-typing and
+something we'll explain later on...
+
+However, there is still a place for checking types. It's a good programming principle
+that errors should show up as close to the source of the problem as possible. If the
+problem only shows up long after it was caused it can be very hard to debug.
+
+We use the ``isinstance`` function to check the type of an object. ``isinstance``
+allows us to specify more than one type. In the case of ``Thing`` either an integer or
+a float would work. Try out this code and see what happens if you instantiate ``Thing``
+with the wrong type.
+
+.. code-block:: python
+
+  class Thing:
+      def __init__(self, number):
+          if not isinstance(number, (float, int)):
+             raise TypeError("number should be a number")
+          self._number = number
+
+      def add(self, another_number):
+          return self.number + another_number
+
+This still leaves the problem of how do we protect the number attribute from being
+changed from the outside? Python has a concept of "computed attributes" called properties.
+These allow you to write a method that looks like an attribute. The public API, the way
+you access it, is the same as an attribute but when it is looked up the method is called.
+
+As access to the attribute is controlled it can't be set (changed) unless you write a
+setter. By default properties are "get only". So we write a "getter method" and decorate
+it as a property.
+
+Try this code and see what happens:
+
+.. code-block:: pycon
+
+  >>> class ADifferentThing:
+  ...  @property
+  ...  def attribute(self):
+  ...      print("Attribute looked up!")
+  ...      return 3
+  ...
+  >>> thing = ADifferentThing()
+  >>> thing.attribute
+
+See what happens if you try and set ``attribute`` from the outside.
+
+.. code-block:: pycon
+
+  >>> thing.attribute = 4
+
+But in the case of our original ``Thing`` class, we need to store the actual number
+somewhere. Python has a *very strong* community convention that attributes and methods
+whose names start with an underscore are private. The programming language doesn't stop
+you from changing them, but everyone understands that if you mess with private attributes
+you're responsible for the consequences...
+
+The common pattern for data protected by a property is to put the real data in an attribute
+with the same name but with a leading underscore added.
+
+That makes our ``Thing`` class look like this:
+
+.. code-block:: python
+
+  class Thing:
+      def __init__(self, number):
+          if not isinstance(number, (float, int)):
+             raise TypeError("number should be a number")
+          self._number = number
+
+      @property
+      def number(self):
+          return self._number
+
+      def add(self, another_number):
+          return self.number + another_number
+
+In exercise 4 we created a ``Location`` class with a name, a longitude and a latitude.
+The name of the location needs to be a string and longitude and latitude should be
+floating point numbers.
+
+Create a new version of this class that checks the type of the three parameters in the
+``__init__`` method. Keep the attributes private and provide public properties for
+accessing them.
+
+There is a syntax for creating properties with setter methods as well as getter methods.
+It's slightly jarring syntax, just because of the way it works, but once you get used to
+it you get over that! We're not using it in this tutorial, but I'm showing it to you here
+just so you know that it's possible. We could do the type checking we need in the property
+setter for example.
+
+.. code-block:: python
+
+  class Thing:
+      def __init__(self, number):
+        self.number = number
+
+      @property
+      def number(self):
+          return self._number
+
+      @number.setter
+      def number(self, number):
+          if not isinstance(number, (float, int)):
+             raise TypeError("number should be a number")
+          self._number = number
+
+      def add(self, another_number):
+          return self.number + another_number
+
+.. code-block:: pycon
+
+  >>> t = Thing(1)
+  >>> t.number = 3
+  >>> t.number = 'fish'
+  Traceback (most recent call last):
+    ....
+  TypeError: number should be a number

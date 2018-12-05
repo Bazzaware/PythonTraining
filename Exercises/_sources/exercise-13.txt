@@ -1,0 +1,142 @@
+13 Modules and Import
+======================
+
+This exercise is about some of the details of library modules. Start this exercise by
+creating a very simple library module:
+
+.. code-block:: python
+
+    # simplemod.py
+
+    x = 42        # A global variable
+
+    # A simple function
+    def foo():
+        print('x is', x)
+
+    # A simple class
+    class Spam(object):
+        def yow(self):
+            print('Yow!')
+
+    # A scripting statement
+    print('Loaded simplemod')
+
+
+Module Loading and System Path
+------------------------------
+
+Try importing the module you just created:
+
+.. code-block:: pycon
+
+    >>> import simplemod
+    Loaded simplemod
+    >>> simplemod.foo()
+    x is 42
+    >>>
+
+If this failed with an ImportError, your path setting is flaky. Look at the value of
+``sys.path`` and fix it.
+
+.. code-block:: pycon
+
+    >>> import sys
+    >>> sys.path
+    ... look at the result ...
+    >>>
+
+Repeated Module Loading
+-----------------------
+
+Make sure you understand that modules are only loaded once. Try a repeated import and
+notice how you do not see the output from the print function:
+
+.. code-block:: pycon
+
+    >>> import simplemod
+    >>>
+
+Try changing the value of x and see that a repeated import has no effect.
+
+.. code-block:: pycon
+
+    >>> simplemod.x
+    42
+    >>> simplemod.x = 13
+    >>> simplemod.x
+    13
+    >>> import simplemod
+    >>> simplemod.x
+    13
+    >>>
+
+Use ``importlib.reload()`` if you want to force a module to reload.
+
+.. code-block:: pycon
+
+    >>> import importlib
+    >>> importlib.reload(simplemod)
+    Loaded simplemod
+    <module 'simplemod' from 'simplemod.py'>
+    >>> simplemod.x
+    42
+    >>>
+
+``sys.modules`` is a dictionary of all loaded modules. Take a look at it, delete your
+module, and try a repeated import.
+
+.. code-block:: pycon
+
+    >>> sys.modules
+    ... look at output ...
+    >>> sys.modules['simplemod']
+    <module 'simplemod' from 'simplemod.py'>
+    >>> del sys.modules['simplemod']
+    >>> import simplemod
+    Loaded simplemod
+    >>>
+
+from module import
+------------------
+
+Restart Python and import a selected symbol from a module.
+
+.. code-block:: pycon
+
+    >>> ========================= [ RESTART ] =========================
+    >>> from simplemod import foo
+    Loaded simplemod
+    >>> foo()
+    x is 42
+    >>>
+
+Notice how this loaded the entire module (observe the output of the print function and
+how the x variable is used).
+
+When you use from, the module object itself is not visible. For example:
+
+.. code-block:: pycon
+
+    >>> simplemod.foo()
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    NameError: name 'simplemod' is not defined
+    >>>
+
+Make sure you understand that when you export things from a module, they are simply name
+references. For example, try this and explain:
+
+.. code-block:: pycon
+
+    >>> from simplemod import x,foo
+    >>> x
+    42
+    >>> foo()
+    x is 42
+    >>> x = 13
+    >>> foo()
+    x is 42                   # !! Please explain
+    >>> x
+    13
+    >>>

@@ -1,0 +1,176 @@
+2. Collections and Containers
+=============================
+
+The List
+--------
+
+Lists are an extremely powerful and flexible container type. Sometimes called arrays in other languages. They don't have a fixed length (they grow and shrink as you add and remove items) and they can contain objects of any type.
+
+Start by creating an empty list and add to it with the ``append`` method:
+
+.. code-block:: pycon
+
+  >>> my_list = []
+  >>> len(my_list)
+  0
+  >>> my_list.append("fish")
+  >>> my_list
+  ["fish"]
+
+Try adding a bunch of things to the list and see how the length changes in the way you'd expect. Once you've got a list with several items in it you can pull them out by position using indexing. Indexing starts at position zero:
+
+.. code-block:: pycon
+
+  >>> my_list[0]
+  "fish"
+
+See what happens if you try to lookup a position off the end of the list.
+
+You can also index from the end of the list (backwards!) using negative numbers. Try it!
+
+.. code-block:: pycon
+
+  >>> my_list[-1]
+  "ham"
+
+As well as fetching items out by position (index) you can also change items. This is another kind of assignment, like assigning to a variable.
+
+.. code-block:: pycon
+
+  >>> my_list[2] = "bacon"
+
+Try changing several of the items in your list and then verify they've changed by fetching them back out again.
+
+We can also delete entries from a list. Notice how deleting an item doesn't leave an empty gap, all the other entries "shuffle down":
+
+.. code-block:: pycon
+
+  >>> my_list = ["ham", "bacon", "eggs", "fish"]
+  >>> my_list[1]
+  "bacon"
+  >>> del my_list[1]
+  >>> my_list[1]
+  "eggs"
+
+As well as deleting items in a list you might want to insert a new item. We know we can add items to the end of the list, what about putting an item at the start or even in the middle? Lists have the ``insert`` method for just this purpose. It takes the position (index) you want to insert the item at and the item itself. To put something right at the start of the list you use index 0.
+
+.. code-block:: pycon
+
+  >>> my_list.insert(0, "apple")
+
+Often we want to process entries in a list one at a time. There are various ways of doing this, including the ``for`` loop.
+
+.. code-block:: python
+
+  my_list = ["ham", "bacon", "eggs", "fish"]
+  for entry in my_list:
+      print(entry)
+
+There's also handy method called ``pop`` that will "pop off" the last entry of the list and give it to us.
+
+.. code-block:: python
+
+  my_list = ["ham", "bacon", "eggs", "fish"]
+  while len(my_list) > 0:
+      value = my_list.pop()
+      print(value)
+  print(my_list)
+
+
+Another very important operation you might need to perform on a list is to check if a value is contained inside it. The way to do that is to use the ``in`` operator. This returns True or False. It works by searching the list from start to end, called a "linear search". For very long lists this can be slow (maybe whole milliseconds!), so if this is something you're going to do a lot it may be better to use a dictionary instead where it's much quicker to check if it contains a value. Checking for membership in a list is still very common.
+
+.. code-block:: pycon
+
+  >>> my_list = ["ham", "bacon", "eggs", "fish"]
+  >>> "ham" in my_list
+  True
+  >>> "apple" in my_list
+  False
+
+As this is an operator we can use it in conditional statements:
+
+.. code-block:: python
+
+  if "apple" in my_list:
+      print("We have an apple!")
+
+It's worth noting that lists and strings are both examples of sequences and so they have some things in common. We can index a string to find the character at a certain position (not particularly useful!). More importantly, and definitely very useful, we can use the "in" operator on strings:
+
+.. code-block:: pycon
+
+  >>> string = "Some data we got from somewhere: fish"
+  >>> "fish" in string
+  True
+  >>> "eggs" in string
+  False
+
+There's a very important difference between strings and lists though (as well as the fact that they're different datatypes). We can change a list by adding new entries, deleting entries and changing entries. This is because lists are "mutable", they can change. Strings are immutable, once they're created you can't change them. See what happens if you try:
+
+.. code-block:: pycon
+
+  >>> string = "Some data we got from somewhere"
+  >>> string[0]
+  'S'
+  >>> string[0] = "eggs"
+
+Lists have lots of other useful methods. There's a handy list of some of the most important ones, with examples, here: https://docs.python.org/3/tutorial/datastructures.html
+
+
+The Dictionary
+--------------
+
+Dictionaries are perhaps the most important container type in Python. They're sometimes called "maps", or in computer science "hash tables" or "associative arrays". They map keys to values. They let us put data into a dictionary with a key and then fetch them back out again. They're a useful way of grouping related data where we can refer to each entry by a name, instead of by an index as we did with the list. The key can be any "immutable" value, anything that can't change. It's very common to use strings as the keys. A dictionary with strings as keys is mapping of names to values. The variables inside a program are a mapping of names to values as well, perhaps you can imagine how Python uses dictionaries under the covers. For this reason they're very well optimised.
+
+Dictionaries are created with the "curly brace" syntax. Values can be added and removed using syntax that looks like indexing a list. We can use this syntax to change an existing value or to add a new one:
+
+.. code-block:: pycon
+
+  >>> my_dict = {'eggs': 1, 'bacon': 2, 'ham': 3}
+  >>> my_dict['eggs']
+  1
+  >>> my_dict['ham']
+  3
+  >>> my_dict['ham'] = 4
+  >>> my_dict['ham']
+  4
+  >>> my_dict['fish'] = 5
+  >>> my_dict['fish']
+  5
+
+What happens when you try to fetch a value out of the dictionary that isn't there?
+
+Dictionaries also support the ``in`` operator. With a list Python has to do a "linear search" (checking each entry one by one) to see if a member is contained in it. Dictionaries use a hash table (magic!) and so checking if a key is present in a dictionary or not is very efficient. If you're going to be checking membership often a dictionary is much more efficient than a list. As dictionaries store values by name they're also nice and human friendly, code that fetches things out by name is nice and readable.
+
+.. code-block:: pycon
+
+  >>> my_dict = {}
+  >>> 'foo' in my_dict
+  False
+  >>> my_dict['foo'] = 33
+  >>> 'foo' in my_dict
+  True
+  >>> 'bar' not in my_dict
+  True
+
+Dictionaries also support the ``del`` operator.
+
+.. code-block:: pycon
+
+  >>> del my_dict['foo']
+  >>> 'foo' in my_dict
+  False
+
+We can ask how many entries there are in a dictionary using ``len``:
+
+.. code-block:: pycon
+
+  >>> len(my_dict)
+  3
+
+For a list of all the entries in a dictionary we have the ``keys``, ``values`` and
+``items`` methods. Have a play with them and see if you can understand what they do.
+
+We can also nest dictionaries with dictionaries and lists to build more complex data
+structures. This is one of the ways programs represent complex real world data.
+
+

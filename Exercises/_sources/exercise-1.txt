@@ -1,0 +1,175 @@
+1. Numbers and Strings
+======================
+
+Numbers
+-------
+
+
+Let's write a simple Python program that converts a weight in stones and pounds (good old English measurements) into new-fangled kilograms.
+
+A stone is fourteen pounds, and 2.2 pounds make a kilogram.
+
+Given a weight in stones and pounds, how would you turn this into kilograms using Python?
+
+.. code-block:: pycon
+
+  >>> stones = 12
+  >>> pounds = 10
+  >>> kilograms = XXXX
+
+There's a clue as a comment in this page, if you use the "Page Source" link right at the bottom of the page.
+
+Both stones and pounds are integers in this example. What number type would you expect the kilogram result to be, and why?
+
+.. kg = (stones * 14 + pounds) / 2.2
+
+
+The formula for the area of a circle is pi * radius squared. If we have a circle with a radius of 5 metres, can you use Python to calculate its area?
+
+.. note::
+
+  You can get the value of pi from the math module.
+
+  .. code-block:: pycon
+
+    >>> import math
+    >>> math.pi
+
+  The square root function is also available in the math module:
+
+  .. code-block:: pycon
+
+    >>> math.sqrt(4)
+    2.0
+
+
+.. area = math.pi * (radius ** 2)
+
+How about the other way round, given a circle of area 50 metres squared can you work out its radius?
+
+.. radius = math.sqrt(area / math.pi)
+
+
+Running to the Moon
+-------------------
+
+Jack is exercising and would like to run to the moon. Every time he goes on a run he gets ten percent faster, so he runs ten percent further than before. He starts running at ten miles an hour for one hour every day. The total distance to the moon is 238, 900 miles. Can you calculate how many days it will take before he has run the distance to the moon?
+
+Here's an outline of the program for you to fill in. Copy and paste it into your code editor and edit it until it runs successfully.
+
+.. code-block:: python
+
+    total = 0
+    days = 0
+    distance_per_day = 10
+    distance_to_the_moon = 238900
+    total_run = 0
+
+    while total_run < distance_to_the_moon:
+        total_run = XXX
+        days = XXXX
+        distance_per_day = XXXXX
+
+    print(days)
+    print(total_run)
+
+..
+  total_run + distance_per_day
+  days = days + 1
+  distance_per_day = distance_per_day * 1.1
+
+.. 82 days, total run 247756.42596484275 miles
+
+Using the "``round()``" function can you format the output of the total distance run to two decimal places. ``help(round)`` should give you a clue on how to use it.
+
+The output of ``total_run`` is a floating point number. How would you convert that to an integer?
+
+.. ``int(total_run)``
+
+
+
+Strings and String Methods
+--------------------------
+
+Strings are the type that Python uses to represent text. You create them with quotation marks.
+
+.. code-block:: pycon
+
+  >>> x = "Some text"
+  >>> y = 'More text'
+  >>> z = """Or even triple quotes
+  ... for multi line strings"""
+  ...
+  >>> print(x)
+  Some text
+
+Here the strings x, y and z are *objects*. They have a value and some ways of working with that data. This is really the core concept of objects. They "encapsulate" data along with behaviour.
+
+For example:
+
+.. code-block:: pycon
+
+  >>> x.upper()
+  'SOME TEXT'
+
+The ``upper`` method on strings returns a new string all in upper case, no great surprise. The interesting thing here is that the "upper" method is attached to the string. It is bundled up with the string. We access it as an "attribute" of the string, using the "dot operator". Use ``dir(x)`` to see some of the other attributes and methods available on the string.
+
+Can you write a program that when run will ask the user their name, their age and their place of birth and then print out a personalised greeting based on their answers.
+
+Strings can be added together using "+".
+
+Here's an example to get you started:
+
+.. code-block:: python
+
+  name = input("What is your name? ")
+  greeting = "Hello " + name
+  print(greeting)
+
+Extend this to produce the whole greeting.
+
+Next let's produce the greeting using a multiline string (with triple quotes) and string formatting. Here's an example template for the multiline greeting:
+
+.. code-block:: python
+
+  greeting = """
+  Hello {}.
+  Your age is {}.
+  Your place of birth is {}.
+  """
+..
+  name = input("What is your name? ")
+  age = input("What is your age? ")
+  birth = input("What is your place of birth? ")
+  age = int(age)
+  greeting = """
+  Hello {}.
+  Your age is {}.
+  Your place of birth is {}.
+  """
+  print(greeting.format(name, age, birth))
+
+
+Can you rewrite this template to fit all one line, using ``\n`` escape codes instead of a multiline string?
+
+.. "Hello {}.\nYou age is {}.\nYour place of birth is {}."
+
+
+Can you convert the name and place of birth to all upper case letters before printing? The method that does this is on one of the slides, but if you can't remember it you can use ``dir`` or ``help`` for a reminder of the methods available on strings.
+
+.. name = name.upper()
+
+The example of string formatting we used here uses "{}" as a placeholder for values to be filled in. String formatting in Python is very powerful and has lots of different ways it can be used. Here's another couple of examples:
+
+.. code-block:: python
+
+  "This string has {0} different {1} referenced by {2}".format("several", "placeholders", "position")
+  "This string uses {first} and {second} {third}".format(first="names", second="keyword", third="arguments")
+
+If you want to use actual braces in a string where you're doing formatting you double them up to escape them:
+
+.. code-block:: python
+
+  "This will be filled in {}. This won't {{}}".format("with something")
+
+

@@ -1,0 +1,187 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>12 Composition and Delegation &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="13 Modules and Import" href="exercise-13.html" />
+    <link rel="prev" title="11 Inheritance, Super and the MRO" href="exercise-11.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="composition-and-delegation">
+<h1>12 Composition and Delegation<a class="headerlink" href="#composition-and-delegation" title="Permalink to this headline">¶</a></h1>
+<p>One of the common ways for a framework or library to define an interface is to provide
+an abstract base class to inherit from. This will provide all the methods of the interface
+but they will all raise <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code> if called.</p>
+<p>In your “concrete” implementation of the abstract class, you fill in all the methods.</p>
+<p>In this exercise we’re going to add to our <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> the ability to display
+locations in a variety of different formats: csv, text and html.</p>
+<p>We’ll do this using composition, <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> will have a formatter object which
+it delegates the formatting to.</p>
+<p>The abstract base class for the formatter is this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Formatter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">headings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Emit the headers</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowdata</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Emit a single row of table data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can write various subclasses of <code class="docutils literal notranslate"><span class="pre">Formatter</span></code> to provide different types of formatting.
+Here’s an example formatter that outputs html:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HTMLFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Output data in HTML format.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">headings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;th&gt;{}&lt;/th&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowdata</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">rowdata</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;{}&lt;/td&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Can you write implementations of new formatters that output in text format and csv format?</p>
+<p>This will be another example of polymorphism; three different classes all implementing the
+same interface and able to be used in place of each other with no difference to the caller.</p>
+<p>We can then have a function to choose a formatter based on a selection from the user. For
+example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_formatter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Create an appropriate formatter given an output format name</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;txt&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TextFormatter</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">CSVFormatter</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;html&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HTMLFormatter</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unknown format {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>So all that remains is to hook this into the <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> class, the initialiser
+method could take a formatter name parameter to pick the formatter, and provide a
+method that delegates printing the locations to the formatter.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-7.html">7. Interfaces and APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-8.html">8. Operator Overloading and the Python Protocols</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-9.html">9. First Class Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-10.html">10. Class and Instance Dictionaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-11.html">11 Inheritance, Super and the MRO</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12 Composition and Delegation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-13.html">13 Modules and Import</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-11.html" title="previous chapter">11 Inheritance, Super and the MRO</a></li>
+      <li>Next: <a href="exercise-13.html" title="next chapter">13 Modules and Import</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-12.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

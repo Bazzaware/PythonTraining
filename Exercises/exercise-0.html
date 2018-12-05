@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>0. IDLE &amp; the Interactive Interpreter &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Numbers and Strings" href="exercise-1.html" />
+    <link rel="prev" title="Object Oriented Programming with Python" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="idle-the-interactive-interpreter">
+<h1>0. IDLE &amp; the Interactive Interpreter<a class="headerlink" href="#idle-the-interactive-interpreter" title="Permalink to this headline">¶</a></h1>
+<p>This exercise mostly ensures that everyone has Python and IDLE installed and can launch Python from the command line. We also get to write and run our first Python program!</p>
+<p>This course is based on Python 3.6.</p>
+<div class="section" id="idle">
+<h2>IDLE<a class="headerlink" href="#idle" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also launch IDLE from the command line with the following command: <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">idlelib.idle</span></code></p>
+</div>
+<p>IDLE is a very basic code editor, created with the Tkinter GUI (Graphical User Interface) library which is also included with Python. It lacks many of the features of modern code editors (often called IDEs - Integrated Development Editors but doesn include a very useful interactive interpreter pane and is more than good enough for this course.</p>
+<p>Python files are just text files so any other code editor, including many standard text editors, could be used instead.</p>
+<img alt="The IDLE code editor" class="align-center" src="_images/idle.jpg" />
+<p>Launch IDLE from the start menu of your computer. This actually brings up the “Interactive Interpreter” IDLE window. From the “File” menu select “New File” which should bring up a code editor window.</p>
+<p>Into the code editor window type the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pressing F5 runs the code from the current editor window in the interpreter pane. You have to save the code before you can run it, so pressing F5 should prompt you to save your code. Save the code into the “Exercises” folder as “helloworld.py”.</p>
+<p>Then you should see the code run. Congratulations! You’ve just created and run your first Python program.</p>
+</div>
+<div class="section" id="python-from-the-command-line">
+<h2>Python from the Command Line<a class="headerlink" href="#python-from-the-command-line" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-interactive-interpreter">
+<h3>The Interactive Interpreter<a class="headerlink" href="#the-interactive-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>The normal way to run Python programs is not from within a code editor, but to execute them with Python which is a program itself. This is usually done from the command line. On Windows the command line program is called “cmd.exe”, which should come up if you type cmd into the Windows search bar.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">cd</span></code> (the change directory command) change the directory to the “Exercises” folder. This will be important shortly. Just shout out if you need some help with this. If Python is installed correctly then executing “python”, without any command line arguments, should bring up the Python interactive interpreter.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It’s possible to have several versions of Python installed side-by-side. If <code class="docutils literal notranslate"><span class="pre">python</span></code> brings up Python 2.7 then you might need to use <code class="docutils literal notranslate"><span class="pre">python3</span></code> to use the correct version of Python.</p>
+</div>
+<img alt="The IDLE code editor" class="align-center" src="_images/interactive-interpreter.jpg" />
+<p>Code can be entered directly into the interpreter and is evaluated immediately.</p>
+<p>Try some simple examples.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>At the interactive interpreter there’s a special “magic” variable, the underscore “<code class="docutils literal notranslate"><span class="pre">_</span></code>”. This holds the result of the last expression. <code class="docutils literal notranslate"><span class="pre">_</span></code> isn’t available in your programs, but can be very useful when exploring in the interactive interpreter.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">88</span> <span class="o">+</span> <span class="mi">99</span>
+<span class="go">187</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span>
+<span class="go">187</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">187</span>
+</pre></div>
+</div>
+<p>Because Python is a “dynamic” language, everything is worked out at runtime instead of ahead of time by a compiler, it has great powers of “introspection”. That means we can inspect live objects and get a lot of information about them from the interactive interpreter or from inside a debugger. Two of the most powerful tools for doing that are <code class="docutils literal notranslate"><span class="pre">help</span></code> and <code class="docutils literal notranslate"><span class="pre">dir</span></code>. <code class="docutils literal notranslate"><span class="pre">help</span></code> gives you as much information as possible about an object, whereas <code class="docutils literal notranslate"><span class="pre">dir</span></code> just tells you what attributes and methods it has. Both are very useful and powerful tools when you’re trying to work out how to use things:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="nb">range</span><span class="p">)</span>
+<span class="go">Help on class range in module builtins:</span>
+
+<span class="go">class range(object)</span>
+<span class="go"> |  range(stop) -&gt; range object</span>
+<span class="go"> |  range(start, stop[, step]) -&gt; range object</span>
+<span class="go"> |</span>
+<span class="go"> |  Return an object that produces a sequence of integers from start (inclusive)</span>
+<span class="go"> |  to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.</span>
+<span class="go"> |  start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.</span>
+<span class="go"> |  These are exactly the valid indices for a list of 4 elements.</span>
+<span class="go"> |  When step is given, it specifies the increment (or decrement).</span>
+<span class="go"> | ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">3.2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">[...&#39;as_integer_ratio&#39;, &#39;conjugate&#39;, &#39;fromhex&#39;, &#39;hex&#39;, &#39;imag&#39;, &#39;is_integer&#39;, &#39;real&#39;]</span>
+</pre></div>
+</div>
+<p>Understanding the output can take a bit of experience. This should all become clearer as we progress through the course.</p>
+<p>On Windows CTRL-Z followed by enter should quit the interactive interpreter. <code class="docutils literal notranslate"><span class="pre">exit()</span></code> is another way to quit.</p>
+</div>
+<div class="section" id="running-python-programs">
+<h3>Running Python Programs<a class="headerlink" href="#running-python-programs" title="Permalink to this headline">¶</a></h3>
+<p>If you enter the command <code class="docutils literal notranslate"><span class="pre">dir</span></code> in the command line and the program “helloworld.py” you saved earlier shows up then you’re in the right place!</p>
+<p>The normal way to run Python programs is from the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python helloworld.py
+Hello World!
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">0. IDLE &amp; the Interactive Interpreter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idle">IDLE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-from-the-command-line">Python from the Command Line</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Interfaces and APIs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Object Oriented Programming with Python</a></li>
+      <li>Next: <a href="exercise-1.html" title="next chapter">1. Numbers and Strings</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-0.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

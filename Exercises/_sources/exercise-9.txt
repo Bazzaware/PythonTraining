@@ -1,0 +1,26 @@
+9. First Class Objects
+======================
+
+A simple demonstration of "everything is an object".
+
+Execute the following code in the interactive interpreter. The code puts a function
+a module and a class (an exception type) into a list and then accesses them via
+their position in the list rather than by name.
+
+.. code-block:: pycon
+
+    >>> import math
+    >>> items = [abs, math, ValueError]
+    >>> items
+    [<built-in function abs>, <module 'math' (built-in)>, <class 'ValueError'>]
+    >>> items[0](-45)
+    45
+    >>> items[1].sqrt(2)
+    1.4142135623730951
+    >>> try:
+    ...     x = int('not a number')
+    ... except items[2]:
+    ...   print("Failed!")
+    ...
+    Failed!
+    >>>

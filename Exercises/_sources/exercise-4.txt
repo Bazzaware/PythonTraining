@@ -1,0 +1,89 @@
+4. Exceptions
+==============
+
+We've already seen a bunch of times what happens in Python when things go wrong:
+
+.. code-block:: pycon
+
+  >>> 3 + "not a number"
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  TypeError: unsupported operand type(s) for +: 'int' and 'str'
+  >>> a = {'foo': 'bar'}
+  >>> a['bam']
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  KeyError: 'bam'
+
+These are called "exceptions" and they're the way that Python signals to you that something went wrong. Different types of errors have different types of exceptions. In the first example above we get a ``TypeError`` because you can't add strings to numbers (they're the wrong type) and in the second we get a ``KeyError`` because the key we looked up in the dictionary didn't exist. Normally an unhandled exception will end your program, literally bringing it to a halt with a crash. Some kinds of error we expect though and can even do something about. Python provides a way of catching exceptions, and if we need to even raising new exceptions ourselves.
+
+Exceptions are important in programming because things are *always* going wrong. Sometimes there's even something you can do about it.
+
+The basic syntax for catching an exception is called ``try.. except``. It gives us two blocks of code. Everything inside  the try block is protected by the except and if the right kind of exception is raised then the code inside the except block is executed. Here's a very simple example.
+
+.. code-block:: python
+
+  try:
+      foo # this name doesn't exist
+  except:
+      print("We got a NameError because foo doesn't exist")
+
+The trouble with this kind of exception handling is that it catches every error and it doesn't even tell us what went wrong. We can do better than that, we can catch only specific exceptions and we can get hold of the exception object itself (yes, even exceptions are objects in Python) and have a look at it.
+
+.. code-block:: pycon
+
+  >>> try:
+  ...    foo
+  ... except Exception as e:
+  ...    print(type(e))
+  ...    print(str(e))
+  ...
+  <class 'NameError'>
+  name 'foo' is not defined
+
+Here ``e`` is the *specific* exception being raised (the exception instance - the error represented as an object). We can examine ``e`` inside the except block to find more information about it.
+
+If we're sure we can't actually handle it we can even re-raise it again:
+
+.. code-block:: pycon
+
+  >>> try:
+  ...    foo
+  ... except Exception as e:
+  ...    print(type(e))
+  ...    print(str(e))
+  ...    raise
+  ...
+  <class 'NameError'>
+  name 'foo' is not defined
+  Traceback (most recent call last):
+    File "<stdin>", line 2, in <module>
+  NameError: name 'foo' is not defined
+
+
+Usually turning the exception into a string gives you a good idea of what went wrong. ``Exception`` is the most basic type of error there is, it will catch pretty much any kind of error that can happen. Usually there's only one or two specific errors we're interested in and can recover from. For example suppose we want to read data from a file, but if the file doesn't exist we can just use some default data instead. In this example we'll try and read some data and substitute our own if the file doesn't exist.
+
+.. code-block:: python
+
+    try:
+        with open("foo.txt") as handle:
+            data = handle.read()
+    except FileNotFoundError:
+        print("Missing foo.txt")
+        data = ""
+
+Here's we're *only* catching the ``FileNotFoundError``. Any other error will still cause the program to crash. Usually this is what you want. You don't want unexpected errors to be ignored and the program to carry on running as if nothing went wrong. In Python we call this principle "errors should never pass silently unless expicitly silenced". For more wonderful and pithy comments on Python programming try this at the interactive interpreter:
+
+.. code-block:: pycon
+
+  >>> import this
+
+There's a huge number of built-in exceptions and many modules and libraries define their own as well.
+
+Here's a list of some of them:
+
+* https://docs.python.org/3/library/exceptions.html
+
+Using sub-classing (a feature of object orientation called "inheritance") we can even create our own exceptions. More on that later hopefully.
+
+There's a lot more to exceptions, we can have multiple ``except`` blocks for handling different exceptions differently in the same block of code, we can catch several different types of exceptions in the same except block and we can even have code that runs whether or not an exception occurred (the ``finally`` block).

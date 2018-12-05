@@ -1,0 +1,334 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>8. Operator Overloading and the Python Protocols &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="7. Interfaces and APIs" href="exercise-7.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="operator-overloading-and-the-python-protocols">
+<h1>8. Operator Overloading and the Python Protocols<a class="headerlink" href="#operator-overloading-and-the-python-protocols" title="Permalink to this headline">¶</a></h1>
+<p>Operator overloading is a feature of some object oriented languages, but not all of them.
+Operator overloading is where the language provides a set of interfaces so that user
+defined objects can respond to normal language operations. For example the numeric protocol
+in Python, which defines methods like <code class="docutils literal notranslate"><span class="pre">__add__</span></code>, <code class="docutils literal notranslate"><span class="pre">__mul__</span></code> and so on allows you to
+override the standard numeric operations so that your objects can be added and multiplied
+and so on. The full numeric protocol involves twenty or more methods, you can see all the
+gory details here:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types">https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types</a></li>
+</ul>
+<p>Python protocols tend to be “soft protocols”. You only need to implement as much of the
+interface as you want to support. The more of it you support the more places your object
+will be able to be used, but not all operations may be appropriate for user defined classes.</p>
+<p>(For example strings can be added to each other, so they have the <code class="docutils literal notranslate"><span class="pre">__add__</span></code> method, but
+you can’t multiply a string by a string.)</p>
+<p>Fortunately there are some much simpler protocols, and some much more useful ones. Needing
+to emulate numeric types is a relatively rare use case.</p>
+<div class="section" id="string-representation">
+<h2>String Representation<a class="headerlink" href="#string-representation" title="Permalink to this headline">¶</a></h2>
+<p>One of the simpler protocols is around the string representation of objects. Python has
+two different ways of producing a string representation of an object. One is the “programmer’s
+representation”, and it’s what you see if you look at an object at the interactive
+interpreter or in a debugger. You can also get this string version of an object by calling
+built-in <code class="docutils literal notranslate"><span class="pre">repr</span></code> function.</p>
+<p>The other string representation is meant to be a much more “human readable” version, the
+sort of representation you would show to users. You get this version by calling <code class="docutils literal notranslate"><span class="pre">print</span></code>
+or <code class="docutils literal notranslate"><span class="pre">str</span></code> on an object.</p>
+<p>You can see the difference between the two by using the Python standard library
+<code class="docutils literal notranslate"><span class="pre">datetime.Date</span></code> class.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">datetime.date(2018, 11, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">2018-11-03</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">&#39;datetime.date(2018, 11, 3)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">&#39;2018-11-03&#39;</span>
+</pre></div>
+</div>
+<p>The convention is that, if possible, the <code class="docutils literal notranslate"><span class="pre">repr</span></code> of an object should be something that
+could be fed back to the interpreter. That’s not always possible, if an object has a
+network socket or a file handle for example they can’t just be reproduced, but sometimes
+it’s possible. You can see how the repr of the <code class="docutils literal notranslate"><span class="pre">datetime.date</span></code> object could be used to
+recreate the date object.</p>
+<p>The two protocol methods that provide the repr and the str versions of objects are
+<code class="docutils literal notranslate"><span class="pre">__repr__</span></code> and <code class="docutils literal notranslate"><span class="pre">__str__</span></code>. They’re normal methods on a class, which take <code class="docutils literal notranslate"><span class="pre">self</span></code>
+as the only parameter and return a string. (Not <em>print</em> a string, <em>return</em> a string.)</p>
+<p>If you looked at the output of the <code class="docutils literal notranslate"><span class="pre">fetch</span></code> method from one of our two data-sources in
+exercise 7 you would have seen a list of <code class="docutils literal notranslate"><span class="pre">Location</span></code> instances that looked <em>something</em>
+like this:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">location_store</span> <span class="kn">import</span> <span class="n">NetworkSource</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">NetworkSource</span><span class="p">(</span><span class="s1">&#39;http://www.voidspace.org.uk/coords.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+<span class="go">[&lt;location.Location object at 0x7f0f9272aa20&gt;, &lt;location.Location object at 0x7f0f9272aa90&gt;, &lt;location.Location object at 0x7f0f9272a908&gt;,</span>
+</pre></div>
+</div>
+<p>One of the things it means when we say that “everything is an object” in Python is that every
+type inherits, more or less indirectly, from the base <code class="docutils literal notranslate"><span class="pre">object</span></code> type and inherits some
+behaviour from that. One of the things it inherits is a default implementation of
+the <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> method which provides the <code class="docutils literal notranslate"><span class="pre">repr</span></code> of objects. But it’s not a very useful
+default version.</p>
+<p>Can you write more useful versions? Ideally the string returned by <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> should
+be something that could recreate the object, similar to <code class="docutils literal notranslate"><span class="pre">Location('name',</span> <span class="pre">3.6,</span> <span class="pre">0.1)</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">__str__</span></code> version could be a bit more human readable, perhaps <code class="docutils literal notranslate"><span class="pre">&lt;Location</span> <span class="pre">name='name',</span> <span class="pre">longitude=...&gt;</span></code>.</p>
+</div>
+<div class="section" id="object-equality">
+<h2>Object Equality<a class="headerlink" href="#object-equality" title="Permalink to this headline">¶</a></h2>
+<p>Another very useful protocol method to provide is <code class="docutils literal notranslate"><span class="pre">__eq__</span></code>, which implements the equality
+operator. At the moment two <code class="docutils literal notranslate"><span class="pre">Location</span></code> objects that are the same will compare as not-equal
+just because that’s the default for all objects.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">location</span> <span class="kn">import</span> <span class="n">Location</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l1</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="s2">&quot;frimble&quot;</span><span class="p">,</span> <span class="mf">36.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l2</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="s2">&quot;frimble&quot;</span><span class="p">,</span> <span class="mf">36.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l1</span> <span class="o">==</span> <span class="n">l2</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>What we want is for the equality operator, <code class="docutils literal notranslate"><span class="pre">==</span></code> to check of the name, longitude and latitude
+of the two objects are the same and if they are to return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>The protocol method for overriding the equality operator is the <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> method. It takes
+two parameters: <code class="docutils literal notranslate"><span class="pre">self</span></code> and the object being compared with (usually callled <code class="docutils literal notranslate"><span class="pre">other</span></code>). Beware
+though, you can’t assume the object being compared with is another <code class="docutils literal notranslate"><span class="pre">Location</span></code> - so looking up
+the name or longitude may fail. So you’ll need to do some type checking first.</p>
+<p>Here’s an example object that always compares equal to objects of the same type and always compares
+un-equal to everything else. That should give you a good start:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Thing</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">return</span> <span class="bp">False</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="bp">True</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing1</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing2</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing1</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing1</span> <span class="o">==</span> <span class="n">thing2</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-container-protocol">
+<h2>The Container Protocol<a class="headerlink" href="#the-container-protocol" title="Permalink to this headline">¶</a></h2>
+<p>The container protocol is one of the most powerful and useful protocols to implement.
+It allows you to build your own container classes with custom behaviour. The natural
+syntax for users to use with containers is the normal syntax they use with the built-in
+containers like lists and dictionaries, so having your objects be able to be used in the
+same way gives them an “intuitive API” for aspects of their behaviour that are collection
+like.</p>
+<p>The main methods, for fetching items, setting items and deleting items are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">__getitem__</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">__setitem__</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">__delitem__</span></code></li>
+</ul>
+<p>There are a couple of other useful methods that you can implement that are commonly
+available on containers, to support the <code class="docutils literal notranslate"><span class="pre">in</span></code> operator and the <code class="docutils literal notranslate"><span class="pre">len</span></code> function.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">__contains__</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">__len__</span></code></li>
+</ul>
+<p>There’s also the <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> method to support iteration, something that’s useful
+for containers but probably beyond the scope of this tutorial.</p>
+<p>Here’s an example class that uses thesee. You’ll note that it stores the actual data
+in a backing dictionary, and the protocol methods delegate the actual work to the private
+backing store. This is a common practise, custom container types still need to store the
+data or data-structures they represent somewhere and the built-in collections are what
+Python provides for this.</p>
+<p>It’s also a good example of an object oriented principle called delegation, and perhaps
+even the <em>Decorator Pattern</em> from the famous “Design Patterns: Elements of Reusable
+Object Oriented Programming”. This is where an object wraps, or “decorates” another object,
+adding in or modifying behaviour of the underlying delegated object. (Not to be confused
+with “decorators” in Python which are not entirely unrelated but not the same thing
+as the design pattern.)</p>
+<p>Here’s an example of a simple class that can be used in many similar ways to dictionaries,
+but it adds simple logging (just <code class="docutils literal notranslate"><span class="pre">print</span></code> calls) to the access methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Container</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backing</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Fetching&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backing</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Setting&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backing</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Deleting&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backing</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Checking if we have&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backing</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Chcking length&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backing</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Delegation like this, to another object stored on the object, is also an example of composition.
+The <code class="docutils literal notranslate"><span class="pre">Container</span></code> class above is comosed with a dictionary (the backing-store). There is a
+“has-a” relationship between the object and a dictionary. This is an alternative to inheritance,
+a topic we’ll be looking at shortly.</p>
+<p>Having created this class we can now use it in many of the same ways, using the operators
+we have overloaded, as the built-in container classes.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Container</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Chcking length</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span>
+<span class="go">Setting foo to bar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">Fetching foo</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;foo&#39;</span> <span class="ow">in</span> <span class="n">c</span>
+<span class="go">Checking if we have foo</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Chcking length</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">Deleting foo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">Fetching foo</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;foo&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Our <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> class is really a custom container. It contains <code class="docutils literal notranslate"><span class="pre">Location</span></code> objects
+which all have a name (the town they represent). Based on the examples above can you implement the
+container protocol methods for <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code>, so that the following operations succeed:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">location_store</span> <span class="kn">import</span> <span class="n">LocationStore</span><span class="p">,</span> <span class="n">NetworkSource</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">LocationStore</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">NetworkSource</span><span class="p">(</span><span class="s1">&#39;http://www.voidspace.org.uk/coords.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">fetch_places</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;Redruth&#39;</span><span class="p">]</span>
+<span class="go">Location(&#39;Redruth&#39;, -5.226666, 50.233021)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
+<span class="go">47</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">redruth</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;Redruth&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;Redruth&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;Redruth&#39;</span> <span class="ow">in</span> <span class="n">store</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;Redruth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">redruth</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-7.html">7. Interfaces and APIs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Operator Overloading and the Python Protocols</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#string-representation">String Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#object-equality">Object Equality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-container-protocol">The Container Protocol</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-7.html" title="previous chapter">7. Interfaces and APIs</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-8.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,255 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>6. Types, Properties and Private Members &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. Interfaces and APIs" href="exercise-7.html" />
+    <link rel="prev" title="5. Classes and Instances" href="exercise-5.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="types-properties-and-private-members">
+<h1>6. Types, Properties and Private Members<a class="headerlink" href="#types-properties-and-private-members" title="Permalink to this headline">¶</a></h1>
+<p>By default everything in Python is accessible, there is no notion of “private” members
+built-in to the language. Some people think this makes Python a dangerous language to
+use.</p>
+<p>Privacy and encapsulation is not just about hiding access to fields (another term for
+attributes) but also about hiding implementation details which can include methods.
+Methods and attributes you expect to be accessed by users of an object form the
+“public API” (Application Programming Interface). Implementation details, the parts
+of the object used internally but not useful for users of the code, are the “private API”.</p>
+<p>In Python by default everything is open, any attribute can be looked at and can be changed.
+Because Python is dynamically typed, the types of objects are checked when the code is
+actually run (“at runtime”) attributes can be set to an unexpected type and the error
+might not show up until later.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">another_number</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="n">another_number</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span><span class="s1">&#39;not a number!&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">cannot concatenate &#39;str&#39; and &#39;int&#39; objects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing2</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing2</span><span class="o">.</span><span class="n">number</span>
+<span class="go">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing2</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="s1">&#39;nope, not a number either&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">cannot concatenate &#39;str&#39; and &#39;int&#39; objects</span>
+</pre></div>
+</div>
+<p>There’s two issues here. One is the fact that <code class="docutils literal notranslate"><span class="pre">number</span></code> can be set from the
+outside and the other is that when we create a <code class="docutils literal notranslate"><span class="pre">Thing</span></code> we can pass in the wrong type
+of object. In Python too much type checking is frowned on, because it restricts how
+your code can be used. Because of the dynamic typing Python is much more concerned
+with object behaviour rather than type. This is a concept called duck-typing and
+something we’ll explain later on…</p>
+<p>However, there is still a place for checking types. It’s a good programming principle
+that errors should show up as close to the source of the problem as possible. If the
+problem only shows up long after it was caused it can be very hard to debug.</p>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> function to check the type of an object. <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>
+allows us to specify more than one type. In the case of <code class="docutils literal notranslate"><span class="pre">Thing</span></code> either an integer or
+a float would work. Try out this code and see what happens if you instantiate <code class="docutils literal notranslate"><span class="pre">Thing</span></code>
+with the wrong type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+           <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;number should be a number&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">number</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">another_number</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="n">another_number</span>
+</pre></div>
+</div>
+<p>This still leaves the problem of how do we protect the number attribute from being
+changed from the outside? Python has a concept of “computed attributes” called properties.
+These allow you to write a method that looks like an attribute. The public API, the way
+you access it, is the same as an attribute but when it is looked up the method is called.</p>
+<p>As access to the attribute is controlled it can’t be set (changed) unless you write a
+setter. By default properties are “get only”. So we write a “getter method” and decorate
+it as a property.</p>
+<p>Try this code and see what happens:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">ADifferentThing</span><span class="p">:</span>
+<span class="gp">... </span> <span class="nd">@property</span>
+<span class="gp">... </span> <span class="k">def</span> <span class="nf">attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>     <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Attribute looked up!&quot;</span><span class="p">)</span>
+<span class="gp">... </span>     <span class="k">return</span> <span class="mi">3</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing</span> <span class="o">=</span> <span class="n">ADifferentThing</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thing</span><span class="o">.</span><span class="n">attribute</span>
+</pre></div>
+</div>
+<p>See what happens if you try and set <code class="docutils literal notranslate"><span class="pre">attribute</span></code> from the outside.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">thing</span><span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>But in the case of our original <code class="docutils literal notranslate"><span class="pre">Thing</span></code> class, we need to store the actual number
+somewhere. Python has a <em>very strong</em> community convention that attributes and methods
+whose names start with an underscore are private. The programming language doesn’t stop
+you from changing them, but everyone understands that if you mess with private attributes
+you’re responsible for the consequences…</p>
+<p>The common pattern for data protected by a property is to put the real data in an attribute
+with the same name but with a leading underscore added.</p>
+<p>That makes our <code class="docutils literal notranslate"><span class="pre">Thing</span></code> class look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+           <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;number should be a number&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">number</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">another_number</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="n">another_number</span>
+</pre></div>
+</div>
+<p>In exercise 4 we created a <code class="docutils literal notranslate"><span class="pre">Location</span></code> class with a name, a longitude and a latitude.
+The name of the location needs to be a string and longitude and latitude should be
+floating point numbers.</p>
+<p>Create a new version of this class that checks the type of the three parameters in the
+<code class="docutils literal notranslate"><span class="pre">__init__</span></code> method. Keep the attributes private and provide public properties for
+accessing them.</p>
+<p>There is a syntax for creating properties with setter methods as well as getter methods.
+It’s slightly jarring syntax, just because of the way it works, but once you get used to
+it you get over that! We’re not using it in this tutorial, but I’m showing it to you here
+just so you know that it’s possible. We could do the type checking we need in the property
+setter for example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number</span>
+
+    <span class="nd">@number.setter</span>
+    <span class="k">def</span> <span class="nf">number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+           <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;number should be a number&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">number</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">another_number</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="n">another_number</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="s1">&#39;fish&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="gr">  ....</span>
+<span class="gr">TypeError</span>: <span class="n">number should be a number</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Classes and Instances</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-7.html">7. Interfaces and APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-8.html">8. Operator Overloading and the Python Protocols</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-5.html" title="previous chapter">5. Classes and Instances</a></li>
+      <li>Next: <a href="exercise-7.html" title="next chapter">7. Interfaces and APIs</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-6.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,117 @@
+0. IDLE & the Interactive Interpreter
+=====================================
+
+This exercise mostly ensures that everyone has Python and IDLE installed and can launch Python from the command line. We also get to write and run our first Python program!
+
+This course is based on Python 3.6.
+
+
+IDLE
+----
+
+.. note::
+
+   You can also launch IDLE from the command line with the following command: ``python3 -m idlelib.idle``
+
+
+
+IDLE is a very basic code editor, created with the Tkinter GUI (Graphical User Interface) library which is also included with Python. It lacks many of the features of modern code editors (often called IDEs - Integrated Development Editors but doesn include a very useful interactive interpreter pane and is more than good enough for this course.
+
+Python files are just text files so any other code editor, including many standard text editors, could be used instead.
+
+.. image:: images/idle.jpg
+  :alt: The IDLE code editor
+  :align: center
+
+Launch IDLE from the start menu of your computer. This actually brings up the "Interactive Interpreter" IDLE window. From the "File" menu select "New File" which should bring up a code editor window.
+
+Into the code editor window type the following Python code:
+
+.. code-block:: python
+
+  print("Hello World!")
+
+Pressing F5 runs the code from the current editor window in the interpreter pane. You have to save the code before you can run it, so pressing F5 should prompt you to save your code. Save the code into the "Exercises" folder as "helloworld.py".
+
+Then you should see the code run. Congratulations! You've just created and run your first Python program.
+
+
+
+Python from the Command Line
+----------------------------
+
+
+The Interactive Interpreter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The normal way to run Python programs is not from within a code editor, but to execute them with Python which is a program itself. This is usually done from the command line. On Windows the command line program is called "cmd.exe", which should come up if you type cmd into the Windows search bar.
+
+Using ``cd`` (the change directory command) change the directory to the "Exercises" folder. This will be important shortly. Just shout out if you need some help with this. If Python is installed correctly then executing "python", without any command line arguments, should bring up the Python interactive interpreter.
+
+.. note::
+
+  It's possible to have several versions of Python installed side-by-side. If ``python`` brings up Python 2.7 then you might need to use ``python3`` to use the correct version of Python.
+
+.. image:: images/interactive-interpreter.jpg
+  :alt: The IDLE code editor
+  :align: center
+
+Code can be entered directly into the interpreter and is evaluated immediately.
+
+Try some simple examples.
+
+.. code-block:: pycon
+
+  >>> print("Hello World!")
+  >>> 1 + 2 + 3 + 4
+
+
+At the interactive interpreter there's a special "magic" variable, the underscore "``_``". This holds the result of the last expression. ``_`` isn't available in your programs, but can be very useful when exploring in the interactive interpreter.
+
+.. code-block:: pycon
+
+  >>> 88 + 99
+  187
+  >>> _
+  187
+  >>> x = _
+  >>> x
+  187
+
+Because Python is a "dynamic" language, everything is worked out at runtime instead of ahead of time by a compiler, it has great powers of "introspection". That means we can inspect live objects and get a lot of information about them from the interactive interpreter or from inside a debugger. Two of the most powerful tools for doing that are ``help`` and ``dir``. ``help`` gives you as much information as possible about an object, whereas ``dir`` just tells you what attributes and methods it has. Both are very useful and powerful tools when you're trying to work out how to use things:
+
+.. code-block:: pycon
+
+  >>> help(range)
+  Help on class range in module builtins:
+
+  class range(object)
+   |  range(stop) -> range object
+   |  range(start, stop[, step]) -> range object
+   |
+   |  Return an object that produces a sequence of integers from start (inclusive)
+   |  to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.
+   |  start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.
+   |  These are exactly the valid indices for a list of 4 elements.
+   |  When step is given, it specifies the increment (or decrement).
+   | ...
+  >>> x = 3.2
+  >>> dir(x)
+  [...'as_integer_ratio', 'conjugate', 'fromhex', 'hex', 'imag', 'is_integer', 'real']
+
+Understanding the output can take a bit of experience. This should all become clearer as we progress through the course.
+
+On Windows CTRL-Z followed by enter should quit the interactive interpreter. ``exit()`` is another way to quit.
+
+
+Running Python Programs
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you enter the command ``dir`` in the command line and the program "helloworld.py" you saved earlier shows up then you're in the right place!
+
+The normal way to run Python programs is from the command line:
+
+::
+
+  $ python helloworld.py
+  Hello World!

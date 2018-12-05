@@ -1,0 +1,266 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>7. Interfaces and APIs &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="8. Operator Overloading and the Python Protocols" href="exercise-8.html" />
+    <link rel="prev" title="6. Types, Properties and Private Members" href="exercise-6.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="interfaces-and-apis">
+<h1>7. Interfaces and APIs<a class="headerlink" href="#interfaces-and-apis" title="Permalink to this headline">¶</a></h1>
+<p>Interfaces are probably one of the most important practical aspects of object oriented
+programming. Many languages have them as a first class construct and Python does in the
+form of <code class="docutils literal notranslate"><span class="pre">ABCs</span></code> (Abstract Base Classes) that allow you to formally define an interface.</p>
+<p>They’re important because the interface an object defines its behaviour and what you can
+do with it. It’s the most defining thing about an object. In order to use code you need to
+know what API is available to you and when you’re designing code a major part of deciding
+how the code will work is deciding what API you will expose.</p>
+<p>However Python has always thrived on the principle of duck-typing, and that’s usually
+done by documenting or making clear in the code what the public API of your objects
+is and what interface you require for objects you work with, rather than formally
+defining them. This means that if you have code that works with “file like objects”
+it may only require an object with a <code class="docutils literal notranslate"><span class="pre">read</span></code> method. Users of your code can pass
+in object that implements that interface.</p>
+<p>Take your <code class="docutils literal notranslate"><span class="pre">location.py</span></code> from exercise 5 and create a new file alongside it called
+<code class="docutils literal notranslate"><span class="pre">location_store.py</span></code>. We’re going to build a <code class="docutils literal notranslate"><span class="pre">Location</span></code> container class that can
+also calculate the distance between locations (using the <a class="reference external" href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">location</span> <span class="kn">import</span> <span class="n">Location</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">asin</span><span class="p">,</span> <span class="n">sqrt</span>
+
+<span class="k">class</span> <span class="nc">LocationStore</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_places</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">fetch_places</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="n">places</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">place</span> <span class="ow">in</span> <span class="n">places</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_places</span><span class="p">[</span><span class="n">place</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">place</span>
+
+    <span class="k">def</span> <span class="nf">get_place</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_places</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">all_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_places</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Haversine geographic distance. Returns distance in kilometres.&quot;&quot;&quot;</span>
+        <span class="n">loc1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_place</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span>
+        <span class="n">loc2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_place</span><span class="p">(</span><span class="n">name2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">(</span><span class="n">loc1</span><span class="p">,</span> <span class="n">loc2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location1</span><span class="p">,</span> <span class="n">location2</span><span class="p">):</span>
+        <span class="n">lat1</span> <span class="o">=</span> <span class="n">location1</span><span class="o">.</span><span class="n">latitude</span>
+        <span class="n">lat2</span> <span class="o">=</span> <span class="n">location2</span><span class="o">.</span><span class="n">latitude</span>
+        <span class="n">lon1</span> <span class="o">=</span> <span class="n">location1</span><span class="o">.</span><span class="n">longitude</span>
+        <span class="n">lon2</span> <span class="o">=</span> <span class="n">location2</span><span class="o">.</span><span class="n">longitude</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="mf">0.017453292519943295</span>     <span class="c1">#Pi/180</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">cos</span><span class="p">((</span><span class="n">lat2</span> <span class="o">-</span> <span class="n">lat1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat1</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat2</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cos</span><span class="p">((</span><span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="mi">12742</span> <span class="o">*</span> <span class="n">asin</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The public API of <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> is the following methods:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">fetch_places</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">get_place</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">all_names</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">distance</span></code></li>
+</ul>
+<p>Part of the implementation of <code class="docutils literal notranslate"><span class="pre">distance</span></code> is done in a private method called <code class="docutils literal notranslate"><span class="pre">_distance</span></code>
+which <code class="docutils literal notranslate"><span class="pre">distance</span></code> delegates to. This is a common pattern.</p>
+<p>The interesting method, without which this class is pretty useless, is <code class="docutils literal notranslate"><span class="pre">fetch_places</span></code>.
+This is the method responsible for populating the store with locations. It takes a data
+source and we can see from the code (and hopefully read in the mythical documentation for
+this class) that the data source is any object which implements a <code class="docutils literal notranslate"><span class="pre">fetch()</span></code> method that
+returns a list of <code class="docutils literal notranslate"><span class="pre">Location</span></code> instances. This allows the <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> to work with
+potentially many different sources of data; for example from data files, or from the
+internet or from a database. All you need is an appropriate data source class that
+implements the right interface.</p>
+<p>It happens there’s a file with tab separated location information included with these
+exercises, and this file is also available on the internet. So we have two potential data
+sources, the local filesystem and the internet.</p>
+<p>For fetching data from the internet by far the easiest library to use is called
+<a class="reference external" href="http://docs.python-requests.org/en/master/">requests</a>. There are several kinds of
+requests you can make from the internet, the most common two are <code class="docutils literal notranslate"><span class="pre">get</span></code>, which is a normal
+request to fetch a page or resource, and <code class="docutils literal notranslate"><span class="pre">post</span></code> which is when you send data to a website
+often as a result of filling in a web form.</p>
+<p>Here’s how easy it is to fetch something from the internet using <code class="docutils literal notranslate"><span class="pre">get</span></code> with <code class="docutils literal notranslate"><span class="pre">requests</span></code>:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://agileabstractions.com/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">text</span>
+<span class="go">&#39;&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Agile Abstractions: Michael Foord – Python Training, Contracting and Consulting. Automated testing specialist.&lt;/title&gt;...&#39;</span>
+</pre></div>
+</div>
+<p>The data file is available from the internet at <a class="reference external" href="http://www.voidspace.org.uk/coords.txt">http://www.voidspace.org.uk/coords.txt</a></p>
+<p>Here’s an example implementation of a data source that has a <code class="docutils literal notranslate"><span class="pre">fetch()</span></code> method which
+fetches the file from the internet and returns a list of <code class="docutils literal notranslate"><span class="pre">Location</span></code> instances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NetworkSource</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">places</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;url {!r} failed with status code {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">places</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Location</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">longitude</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">latitude</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">places</span>
+</pre></div>
+</div>
+<p>You can use this data source with the store like this:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">LocationStore</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">NetworkSource</span><span class="p">(</span><span class="s1">&#39;http://www.voidspace.org.uk/coords.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">fetch_places</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="s2">&quot;Marlow&quot;</span><span class="p">,</span> <span class="s2">&quot;Redruth&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>After you’ve done the <code class="docutils literal notranslate"><span class="pre">fetch_places</span></code> call you can use <code class="docutils literal notranslate"><span class="pre">all_names</span></code> to see which
+places are available in the location store.</p>
+<p>It’s worth noting that passing in dependencies like this, the <code class="docutils literal notranslate"><span class="pre">LocationStore</span></code> depends on
+having a data source to be able to populate itself, is an example of <em>dependency injection</em>.
+This is where dependencies are supplied at the time they’re needed rather than, for example,
+just instantiated in the constructor. It makes the dependencies clearer and the code more
+flexible. It does have the disadvantage that you need to explicitly keep track of and pass
+around the dependencies a lot more.</p>
+<p>You can see in the fetch method of <code class="docutils literal notranslate"><span class="pre">NetworkSource</span></code> how the data comes in as a single
+string in <code class="docutils literal notranslate"><span class="pre">response.text</span></code>. The <code class="docutils literal notranslate"><span class="pre">splitlines</span></code> method turns that into a list of
+individual lines to be processed separately. Each line looks something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Porthcawl</span>   <span class="mf">51.478970</span>       <span class="o">-</span><span class="mf">3.705163</span>
+</pre></div>
+</div>
+<p>The same file is included with these exercises as <code class="docutils literal notranslate"><span class="pre">data/coords.txt</span></code>. Write a <code class="docutils literal notranslate"><span class="pre">FileSource</span></code>
+class that behaves the same as our <code class="docutils literal notranslate"><span class="pre">NetworkSource</span></code> but processes the file from the
+file system instead.</p>
+<p>As a clue, here’s how to open a file and read it in a line at a time:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;path/filename&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="c1"># do something with each line here</span>
+</pre></div>
+</div>
+<p>The ‘r’ as the second argument to the <code class="docutils literal notranslate"><span class="pre">open</span></code> function is optional as it specifies “read”
+mode which is the default. We use it with the slightly funny <code class="docutils literal notranslate"><span class="pre">with</span></code> statement syntax,
+because that means that Python automatically closes the file for us when we’re done with it
+(when we leave the code indented under the <code class="docutils literal notranslate"><span class="pre">with</span></code>). Because the file is opened in read mode
+we could either read the whole file in using the <code class="docutils literal notranslate"><span class="pre">.read()</span></code> method of the file handle, or
+we can iterate over it a line at a time which is what the for loop is doing.</p>
+<p>If the file was opened in write mode <code class="docutils literal notranslate"><span class="pre">'w'</span></code> the file handle would have a useful <code class="docutils literal notranslate"><span class="pre">.write(...)</span></code>
+method we could use to write text out to the file. But that’s not useful for this exercise.</p>
+<p>Every line in the file needs treating in much the same way as every line did in the <code class="docutils literal notranslate"><span class="pre">NetworkSource</span></code> code.
+An example <code class="docutils literal notranslate"><span class="pre">FileSource</span></code> is included in the relevant place if you get stuck.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Interfaces and APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-8.html">8. Operator Overloading and the Python Protocols</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-6.html" title="previous chapter">6. Types, Properties and Private Members</a></li>
+      <li>Next: <a href="exercise-8.html" title="next chapter">8. Operator Overloading and the Python Protocols</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-7.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

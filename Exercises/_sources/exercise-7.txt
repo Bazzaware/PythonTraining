@@ -1,0 +1,174 @@
+7. Interfaces and APIs
+======================
+
+Interfaces are probably one of the most important practical aspects of object oriented
+programming. Many languages have them as a first class construct and Python does in the
+form of ``ABCs`` (Abstract Base Classes) that allow you to formally define an interface.
+
+They're important because the interface an object defines its behaviour and what you can
+do with it. It's the most defining thing about an object. In order to use code you need to
+know what API is available to you and when you're designing code a major part of deciding
+how the code will work is deciding what API you will expose.
+
+However Python has always thrived on the principle of duck-typing, and that's usually
+done by documenting or making clear in the code what the public API of your objects
+is and what interface you require for objects you work with, rather than formally
+defining them. This means that if you have code that works with "file like objects"
+it may only require an object with a ``read`` method. Users of your code can pass
+in object that implements that interface.
+
+Take your ``location.py`` from exercise 5 and create a new file alongside it called
+``location_store.py``. We're going to build a ``Location`` container class that can
+also calculate the distance between locations (using the `Haversine formula <https://en.wikipedia.org/wiki/Haversine_formula>`_).
+
+.. code-block:: python
+
+    from location import Location
+
+    from math import cos, asin, sqrt
+
+    class LocationStore:
+
+        def __init__(self):
+            self._places = {}
+
+        def fetch_places(self, source):
+            places = source.fetch()
+            for place in places:
+                self._places[place.name] = place
+
+        def get_place(self, name):
+            return self._places[name]
+
+        def all_names(self):
+            return list(self._places.keys())
+
+        def distance(self, name1, name2):
+            """Haversine geographic distance. Returns distance in kilometres."""
+            loc1 = self.get_place(name1)
+            loc2 = self.get_place(name2)
+            return self._distance(loc1, loc2)
+
+        def _distance(self, location1, location2):
+            lat1 = location1.latitude
+            lat2 = location2.latitude
+            lon1 = location1.longitude
+            lon2 = location2.longitude
+
+            p = 0.017453292519943295     #Pi/180
+            a = 0.5 - cos((lat2 - lat1) * p)/2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
+            return 12742 * asin(sqrt(a))
+
+The public API of ``LocationStore`` is the following methods:
+
+* ``fetch_places``
+* ``get_place``
+* ``all_names``
+* ``distance``
+
+Part of the implementation of ``distance`` is done in a private method called ``_distance``
+which ``distance`` delegates to. This is a common pattern.
+
+The interesting method, without which this class is pretty useless, is ``fetch_places``.
+This is the method responsible for populating the store with locations. It takes a data
+source and we can see from the code (and hopefully read in the mythical documentation for
+this class) that the data source is any object which implements a ``fetch()`` method that
+returns a list of ``Location`` instances. This allows the ``LocationStore`` to work with
+potentially many different sources of data; for example from data files, or from the
+internet or from a database. All you need is an appropriate data source class that
+implements the right interface.
+
+It happens there's a file with tab separated location information included with these
+exercises, and this file is also available on the internet. So we have two potential data
+sources, the local filesystem and the internet.
+
+For fetching data from the internet by far the easiest library to use is called
+`requests <http://docs.python-requests.org/en/master/>`_. There are several kinds of
+requests you can make from the internet, the most common two are ``get``, which is a normal
+request to fetch a page or resource, and ``post`` which is when you send data to a website
+often as a result of filling in a web form.
+
+Here's how easy it is to fetch something from the internet using ``get`` with ``requests``:
+
+.. code-block:: pycon
+
+    >>> import requests
+    >>> response = requests.get('https://agileabstractions.com/')
+    >>> response.status_code
+    200
+    >>> response.text
+    '<!DOCTYPE html>\n<html>\n  <head>\n    <title>Agile Abstractions: Michael Foord – Python Training, Contracting and Consulting. Automated testing specialist.</title>...'
+
+The data file is available from the internet at http://www.voidspace.org.uk/coords.txt
+
+Here's an example implementation of a data source that has a ``fetch()`` method which
+fetches the file from the internet and returns a list of ``Location`` instances:
+
+.. code-block:: python
+
+    class NetworkSource:
+        def __init__(self, url):
+            self.url = url
+
+        def fetch(self):
+            places = []
+            response = requests.get(self.url)
+            if response.status_code != 200:
+                raise Exception("url {!r} failed with status code {}".format(self.url, response.status_code))
+            for line in response.text.splitlines():
+                line = line.rstrip()
+                if line == "":
+                    continue
+                name, latitude, longitude = line.split('\t')
+                places.append(Location(name, float(longitude), float(latitude)))
+            return places
+
+You can use this data source with the store like this:
+
+.. code-block:: pycon
+
+    >>> store = LocationStore()
+    >>> source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
+    >>> store.fetch_places(source)
+    >>> print(store.distance("Marlow", "Redruth"))
+
+After you've done the ``fetch_places`` call you can use ``all_names`` to see which
+places are available in the location store.
+
+It's worth noting that passing in dependencies like this, the ``LocationStore`` depends on
+having a data source to be able to populate itself, is an example of *dependency injection*.
+This is where dependencies are supplied at the time they're needed rather than, for example,
+just instantiated in the constructor. It makes the dependencies clearer and the code more
+flexible. It does have the disadvantage that you need to explicitly keep track of and pass
+around the dependencies a lot more.
+
+You can see in the fetch method of ``NetworkSource`` how the data comes in as a single
+string in ``response.text``. The ``splitlines`` method turns that into a list of
+individual lines to be processed separately. Each line looks something like this::
+
+    Porthcawl	51.478970	-3.705163
+
+The same file is included with these exercises as ``data/coords.txt``. Write a ``FileSource``
+class that behaves the same as our ``NetworkSource`` but processes the file from the
+file system instead.
+
+As a clue, here's how to open a file and read it in a line at a time:
+
+.. code-block:: python
+
+    with open('path/filename', 'r') as handle:
+        for line in handle:
+            # do something with each line here
+
+The 'r' as the second argument to the ``open`` function is optional as it specifies "read"
+mode which is the default. We use it with the slightly funny ``with`` statement syntax,
+because that means that Python automatically closes the file for us when we're done with it
+(when we leave the code indented under the ``with``). Because the file is opened in read mode
+we could either read the whole file in using the ``.read()`` method of the file handle, or
+we can iterate over it a line at a time which is what the for loop is doing.
+
+If the file was opened in write mode ``'w'`` the file handle would have a useful ``.write(...)``
+method we could use to write text out to the file. But that's not useful for this exercise.
+
+Every line in the file needs treating in much the same way as every line did in the ``NetworkSource`` code.
+An example ``FileSource`` is included in the relevant place if you get stuck.

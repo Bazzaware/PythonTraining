@@ -1,0 +1,190 @@
+5. Classes and Instances
+========================
+
+In this section we'll try to get to grips with what is conceptually the hardest part of working with object oriented programming in practise. Like many ideas, it's simple once
+you've grasped it but it can take a while to get your head round.
+
+We've seen that for strings their type is ``str``. It's the ``str`` type that defines their behaviour, so all strings get methods like ``upper`` and ``lower`` and ``strip`` (etc)
+because they're instances of the ``str`` type. Although they share a common definition different strings have different values.
+
+.. code-block:: pycon
+
+    >>> x = "foo"
+    >>> y = "bar"
+    >>> x == y
+    False
+    >>> type(x) == type(y)
+    True
+
+With Python we create our own classes using the ``class`` statement. This defines the
+attributes and behaviour of instances of that class.
+
+Methods of the class, ways of working with the class, are defined as functions inside
+the body of the class.
+
+Here's a very simple example.
+
+.. code-block:: python
+
+    class Person:
+        def say_hello(self):
+            print("Hello")
+
+You can create instances of your new class by "instantiating" it:
+
+.. code-block:: pycon
+
+    >>> person = Person()
+    >>> person.say_hello()
+    Hello
+
+This of course is a very boring class and not much use. Classes are typically useful
+because they contain some data unique to them. This is often passed into the class
+when it is instantiated. Once we've looked at this the magic variable "self" in the
+``say_hello`` method above should make more sense.
+
+To pass arguments, data, to a class when you instantiate it we write an "initializer"
+method. This is a special method that Python will call for us when our classes are
+instantiated. In Python special methods that the interpreter calls for you, often called
+magic methods, usually have names that start and end with double underscores.
+
+The initializer method is called ``__init__``. It's common in OOP to call the method
+that creates objects the "constructor". Python actually has a two phase object creation,
+the ``__init__`` method takes the already created instance as the first argument so we
+call it an initializer rather than a constructor.
+
+.. code-block:: python
+
+    class Person:
+
+        def __init__(self, name):
+            self.name = name
+
+        def say_hello(self):
+            print("Hello, my name is", self.name)
+
+.. code-block:: pycon
+
+    >>> michael = Person("Michael")
+    >>> michael.say_hello()
+    Hello, my name is Michael
+    >>> jane = Person("Jane")
+    >>> jane.say_hello()
+    Hello, my name is Jane
+    >>> michael.name
+    'Michael'
+    >>> jane.name
+    'Jane'
+
+When ``Person`` is instantiated a name is passed in. Our initializer method stores the name
+as an "attribute" on the instance. So although separate instances share the same method
+they have different instance atttributes. Every instance has its own data
+When we call the ``say_hello`` method we don't need to explicitly pass in the ``self``
+parameter. Python does this for us. When we call ``jane.say_hello()`` self refers to jane
+(unsurprisingly).
+
+You can verify this is happening by putting ``print`` calls inside the initializer:
+
+.. code-block:: python
+
+    class Person:
+
+        def __init__(self, name):
+            print("Setting self.name to", name)
+            self.name = name
+
+        def say_hello(self):
+            print("Hello, my name is {}".format(self.name))
+
+Attributes can be set on Python objects at any point, but it's common to initialise all
+attributes (even if just to a default value) in the initializer method. Attributes are
+looked up on objects the same way methods are, using a ".". We call this the "dot operator".
+
+So for any code inside a method of our class, ``self`` refers to the current instance that is
+being worked on. With a single class definition we can have many different instances containing
+different data.
+
+Attributes set on self are called instance attributes. They can only be accessed on the instance
+they belong to. Methods are defined on the class and are accessible from every instance.
+Classes can also have attributes and like methods these are shared by all the instances.
+
+Here's an example making the greeting a class attribute:
+
+
+.. code-block:: python
+
+    class Person:
+
+        greeting = "Hello my name is {}"
+
+        def __init__(self, name):
+            print("Setting self.name to", name)
+            self.name = name
+
+        def say_hello(self):
+            print(self.greeting.format(self.name))
+
+Can you write a class that takes three parameters in its initializer and sets them as
+instance attributes: ``name``, ``longitude`` and ``latitude``. Save the file you create
+as "location.py"
+
+(If you get stuck there's an example in the "code/exercise4" directory in "location.py".)
+
+How class attributes actually work will become much clearer once we look a little deeper
+into the Python object model.
+
+
+The Three Operations
+--------------------
+
+The entire Python object system consists of just three core operations: getting, setting,
+and deleting of attributes. Normally, these are accessed via the dot (.) like this:
+
+.. code-block:: pycon
+
+  >>> l = Location('Boulmer', 55.422272, -1.579536)
+  >>> l.name    #  get
+  'Boulmer'
+  >>> l.longitude = 55.6    # set
+  >>> del l.longitude     # delete
+  >>>
+
+The three operations are also available as functions. For example:
+
+.. code-block:: pycon
+
+  >>> getattr(l, 'name')            # Same as l.name
+  'Boulmer'
+  >>> setattr(s, 'longitude', 55.6)      # Same as l.longitude = 55.6
+  >>> delattr(l, 'longitude')          # Same as del l.longitude
+  >>>
+
+An additional function hasattr() can be used to probe an object for the existence
+of an attribute:
+
+.. code-block:: pycon
+
+  >>> hasattr(l, 'name')
+  True
+  >>> hasattr(l, 'blah')
+  False
+  >>>
+
+Using getattr()
+---------------
+
+The getattr() function is extremely useful for writing code that processes objects in an
+extremely generic way. To illustrate, consider this example which prints out a set of
+user-defined attributes:
+
+.. code-block:: pycon
+
+    >>> l = Location('Boulmer', 55.422272, -1.579536)
+    >>> fields = ['name','longitude','latitude']
+    >>> for name in fields:
+    ...     print(name, getattr(s, name))
+    ...
+    name Boulmer
+    longitude 55.422272
+    latitude -1.579536
+    >>>

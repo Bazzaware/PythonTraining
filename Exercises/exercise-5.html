@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>5. Classes and Instances &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6. Types, Properties and Private Members" href="exercise-6.html" />
+    <link rel="prev" title="4. Exceptions" href="exercise-4.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="classes-and-instances">
+<h1>5. Classes and Instances<a class="headerlink" href="#classes-and-instances" title="Permalink to this headline">¶</a></h1>
+<p>In this section we’ll try to get to grips with what is conceptually the hardest part of working with object oriented programming in practise. Like many ideas, it’s simple once
+you’ve grasped it but it can take a while to get your head round.</p>
+<p>We’ve seen that for strings their type is <code class="docutils literal notranslate"><span class="pre">str</span></code>. It’s the <code class="docutils literal notranslate"><span class="pre">str</span></code> type that defines their behaviour, so all strings get methods like <code class="docutils literal notranslate"><span class="pre">upper</span></code> and <code class="docutils literal notranslate"><span class="pre">lower</span></code> and <code class="docutils literal notranslate"><span class="pre">strip</span></code> (etc)
+because they’re instances of the <code class="docutils literal notranslate"><span class="pre">str</span></code> type. Although they share a common definition different strings have different values.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;bar&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>With Python we create our own classes using the <code class="docutils literal notranslate"><span class="pre">class</span></code> statement. This defines the
+attributes and behaviour of instances of that class.</p>
+<p>Methods of the class, ways of working with the class, are defined as functions inside
+the body of the class.</p>
+<p>Here’s a very simple example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can create instances of your new class by “instantiating” it:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">person</span><span class="o">.</span><span class="n">say_hello</span><span class="p">()</span>
+<span class="go">Hello</span>
+</pre></div>
+</div>
+<p>This of course is a very boring class and not much use. Classes are typically useful
+because they contain some data unique to them. This is often passed into the class
+when it is instantiated. Once we’ve looked at this the magic variable “self” in the
+<code class="docutils literal notranslate"><span class="pre">say_hello</span></code> method above should make more sense.</p>
+<p>To pass arguments, data, to a class when you instantiate it we write an “initializer”
+method. This is a special method that Python will call for us when our classes are
+instantiated. In Python special methods that the interpreter calls for you, often called
+magic methods, usually have names that start and end with double underscores.</p>
+<p>The initializer method is called <code class="docutils literal notranslate"><span class="pre">__init__</span></code>. It’s common in OOP to call the method
+that creates objects the “constructor”. Python actually has a two phase object creation,
+the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method takes the already created instance as the first argument so we
+call it an initializer rather than a constructor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello, my name is&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">michael</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="s2">&quot;Michael&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">michael</span><span class="o">.</span><span class="n">say_hello</span><span class="p">()</span>
+<span class="go">Hello, my name is Michael</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jane</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="s2">&quot;Jane&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jane</span><span class="o">.</span><span class="n">say_hello</span><span class="p">()</span>
+<span class="go">Hello, my name is Jane</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">michael</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;Michael&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jane</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;Jane&#39;</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">Person</span></code> is instantiated a name is passed in. Our initializer method stores the name
+as an “attribute” on the instance. So although separate instances share the same method
+they have different instance atttributes. Every instance has its own data
+When we call the <code class="docutils literal notranslate"><span class="pre">say_hello</span></code> method we don’t need to explicitly pass in the <code class="docutils literal notranslate"><span class="pre">self</span></code>
+parameter. Python does this for us. When we call <code class="docutils literal notranslate"><span class="pre">jane.say_hello()</span></code> self refers to jane
+(unsurprisingly).</p>
+<p>You can verify this is happening by putting <code class="docutils literal notranslate"><span class="pre">print</span></code> calls inside the initializer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Setting self.name to&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello, my name is {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Attributes can be set on Python objects at any point, but it’s common to initialise all
+attributes (even if just to a default value) in the initializer method. Attributes are
+looked up on objects the same way methods are, using a “.”. We call this the “dot operator”.</p>
+<p>So for any code inside a method of our class, <code class="docutils literal notranslate"><span class="pre">self</span></code> refers to the current instance that is
+being worked on. With a single class definition we can have many different instances containing
+different data.</p>
+<p>Attributes set on self are called instance attributes. They can only be accessed on the instance
+they belong to. Methods are defined on the class and are accessible from every instance.
+Classes can also have attributes and like methods these are shared by all the instances.</p>
+<p>Here’s an example making the greeting a class attribute:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+
+    <span class="n">greeting</span> <span class="o">=</span> <span class="s2">&quot;Hello my name is {}&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Setting self.name to&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">greeting</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Can you write a class that takes three parameters in its initializer and sets them as
+instance attributes: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">longitude</span></code> and <code class="docutils literal notranslate"><span class="pre">latitude</span></code>. Save the file you create
+as “location.py”</p>
+<p>(If you get stuck there’s an example in the “code/exercise4” directory in “location.py”.)</p>
+<p>How class attributes actually work will become much clearer once we look a little deeper
+into the Python object model.</p>
+<div class="section" id="the-three-operations">
+<h2>The Three Operations<a class="headerlink" href="#the-three-operations" title="Permalink to this headline">¶</a></h2>
+<p>The entire Python object system consists of just three core operations: getting, setting,
+and deleting of attributes. Normally, these are accessed via the dot (.) like this:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="s1">&#39;Boulmer&#39;</span><span class="p">,</span> <span class="mf">55.422272</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.579536</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">name</span>    <span class="c1">#  get</span>
+<span class="go">&#39;Boulmer&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="mf">55.6</span>    <span class="c1"># set</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">l</span><span class="o">.</span><span class="n">longitude</span>     <span class="c1"># delete</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>The three operations are also available as functions. For example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">getattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>            <span class="c1"># Same as l.name</span>
+<span class="go">&#39;Boulmer&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="mf">55.6</span><span class="p">)</span>      <span class="c1"># Same as l.longitude = 55.6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">delattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">)</span>          <span class="c1"># Same as del l.longitude</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>An additional function hasattr() can be used to probe an object for the existence
+of an attribute:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;blah&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-getattr">
+<h2>Using getattr()<a class="headerlink" href="#using-getattr" title="Permalink to this headline">¶</a></h2>
+<p>The getattr() function is extremely useful for writing code that processes objects in an
+extremely generic way. To illustrate, consider this example which prints out a set of
+user-defined attributes:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="s1">&#39;Boulmer&#39;</span><span class="p">,</span> <span class="mf">55.422272</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.579536</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">name Boulmer</span>
+<span class="go">longitude 55.422272</span>
+<span class="go">latitude -1.579536</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Classes and Instances</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-three-operations">The Three Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-getattr">Using getattr()</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-7.html">7. Interfaces and APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-8.html">8. Operator Overloading and the Python Protocols</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-9.html">9. First Class Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-10.html">10. Class and Instance Dictionaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-11.html">11 Inheritance, Super and the MRO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-12.html">12 Composition and Delegation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-13.html">13 Modules and Import</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-4.html" title="previous chapter">4. Exceptions</a></li>
+      <li>Next: <a href="exercise-6.html" title="next chapter">6. Types, Properties and Private Members</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-5.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

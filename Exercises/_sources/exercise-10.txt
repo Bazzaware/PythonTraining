@@ -1,0 +1,203 @@
+10. Class and Instance Dictionaries
+===================================
+
+For this exercise let's create a simple ``Stock`` object with a ``cost`` method.
+
+The name is the symbol for the stock (e.g. "GOOG", "IBM", etc), the shares parameter is
+the number of shares (an integer) and price is the cost per share as a floating point
+number. The cost is the number of shares multiplied by the price.
+
+.. code-block:: pycon
+
+    >>> class Stock(object):
+            def __init__(self, name, shares, price):
+                self.name = name
+                self.shares = shares
+                self.price = price
+            def cost(self):
+                return self.shares * self.price
+
+    >>>
+
+Once you have defined this class, create a few instances.
+
+.. code-block:: pycon
+
+    >>> goog = Stock('GOOG',100,490.10)
+    >>> ibm  = Stock('IBM',50, 91.23)
+    >>>
+
+Representation of Instances
+---------------------------
+
+At the interactive shell, inspect the underlying dictionaries of the two instances you
+created:
+
+.. code-block:: pycon
+
+    >>> goog.__dict__
+    ... look at the output ...
+    >>> ibm.__dict__
+    ... look at the output ...
+    >>>
+
+Modification of Instance Data
+-----------------------------
+
+Try setting a new attribute on one of the above instances:
+
+
+.. code-block:: pycon
+
+    >>> goog.date = "6/11/2007"
+    >>> goog.__dict__
+    ... look at output ...
+    >>> ibm.__dict__
+    ... look at output ...
+    >>>
+
+In the above output, you’ll notice that the goog instance has a attribute date whereas
+the ibm instance does not. It is important to note that Python really doesn’t place any
+restrictions on attributes. For example, the attributes of an instance are not limited
+to those set up in the __init__() method.
+
+Instead of setting an attribute, try placing a new value directly into the __dict__
+object:
+
+
+.. code-block:: pycon
+
+    >>> goog.__dict__['time'] = '9:45am'
+    >>> goog.time
+    '9:45am'
+    >>>
+
+Here, you really notice the fact that an instance is a layer on top of a dictionary.
+
+The role of classes
+-------------------
+
+The definitions that make up a class definition are shared by all instances of that class.
+Notice, that all instances have a link back to their associated class:
+
+.. code-block:: pycon
+
+    >>> goog.__class__
+    ... look at output ...
+    >>> ibm.__class__
+    ... look at output ...
+    >>>
+
+Try calling a method on the instances:
+
+.. code-block:: pycon
+
+    >>> goog.cost()
+    49010.0
+    >>> ibm.cost()
+    4561.5
+    >>>
+
+Notice that the name cost is not defined in either goog.__dict__ or ibm.__dict__.
+Instead, it is being supplied by the class dictionary. Try this:
+
+
+.. code-block:: pycon
+
+    >>> Stock.__dict__['cost']
+    ... look at output ...
+    >>>
+
+Try calling the cost() method directly through the dictionary:
+
+.. code-block:: pycon
+
+    >>> Stock.__dict__['cost'](goog)
+    49010.00
+    >>> Stock.__dict__['cost'](ibm)
+    4561.5
+    >>>
+
+Notice how you are calling the function defined in the class definition and how the self
+argument gets the instance.
+
+If you add a new value to the class, it becomes a class variable that’s visible to all
+instances. Try it:
+
+.. code-block:: pycon
+
+    >>> Stock.spam = 42
+    >>> ibm.spam
+    42
+    >>> goog.spam
+    42
+    >>>
+
+Observe that spam is not part of the instance dictionary.
+
+.. code-block:: pycon
+
+    >>> ibm.__dict__
+    ... look at the output ...
+    >>>
+
+Instead, it’s part of the class dictionary:
+
+.. code-block:: pycon
+
+    >>> Stock.__dict__['spam']
+    42
+    >>>
+
+Essentially this is all a class really is—it’s a collection of values shared by instances.
+
+
+Bound Methods
+-------------
+
+A subtle feature of Python is that invoking a method actually involves two steps and
+something known as a bound method. For example:
+
+.. code-block:: pycon
+
+    >>> s = goog.sell
+    >>> s
+    <bound method Stock.sell of Stock('GOOG',100,490.1)>
+    >>> s(25)
+    >>> goog.shares
+    75
+    >>>
+
+Bound methods actually contain all of the pieces needed to call a method. For instance, they keep a record of the function implementing the method:
+
+.. code-block:: pycon
+
+    >>> s.__func__
+    <function sell at 0x10049af50>
+    >>>
+
+This is the same value as found in the Stock dictionary.
+
+.. code-block:: pycon
+
+    >>> Stock.__dict__['sell']
+    <function sell at 0x10049af50>
+    >>>
+
+Bound methods also record the instance, which is the self argument.
+
+.. code-block:: pycon
+
+    >>> s.__self__
+    Stock('GOOG',75,490.1)
+    >>>
+
+When you invoke the function using () all of the pieces come together. For example,
+calling s(25) actually does this:
+
+.. code-block:: pycon
+
+    >>> s.__func__(s.__self__, 25)    # Same as s(25)
+    >>> goog.shares
+    50
+    >>>

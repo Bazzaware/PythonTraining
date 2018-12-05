@@ -1,0 +1,249 @@
+8. Operator Overloading and the Python Protocols
+================================================
+
+Operator overloading is a feature of some object oriented languages, but not all of them.
+Operator overloading is where the language provides a set of interfaces so that user
+defined objects can respond to normal language operations. For example the numeric protocol
+in Python, which defines methods like ``__add__``, ``__mul__`` and so on allows you to
+override the standard numeric operations so that your objects can be added and multiplied
+and so on. The full numeric protocol involves twenty or more methods, you can see all the
+gory details here:
+
+* https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+
+Python protocols tend to be "soft protocols". You only need to implement as much of the
+interface as you want to support. The more of it you support the more places your object
+will be able to be used, but not all operations may be appropriate for user defined classes.
+
+(For example strings can be added to each other, so they have the ``__add__`` method, but
+you can't multiply a string by a string.)
+
+Fortunately there are some much simpler protocols, and some much more useful ones. Needing
+to emulate numeric types is a relatively rare use case.
+
+String Representation
+---------------------
+
+One of the simpler protocols is around the string representation of objects. Python has
+two different ways of producing a string representation of an object. One is the "programmer's
+representation", and it's what you see if you look at an object at the interactive
+interpreter or in a debugger. You can also get this string version of an object by calling
+built-in ``repr`` function.
+
+The other string representation is meant to be a much more "human readable" version, the
+sort of representation you would show to users. You get this version by calling ``print``
+or ``str`` on an object.
+
+You can see the difference between the two by using the Python standard library
+``datetime.Date`` class.
+
+.. code-block:: pycon
+
+    >>> from datetime import date
+    >>> d = date(2018, 11, 3)
+    >>> d
+    datetime.date(2018, 11, 3)
+    >>> print(d)
+    2018-11-03
+    >>> repr(d)
+    'datetime.date(2018, 11, 3)'
+    >>> str(d)
+    '2018-11-03'
+
+The convention is that, if possible, the ``repr`` of an object should be something that
+could be fed back to the interpreter. That's not always possible, if an object has a
+network socket or a file handle for example they can't just be reproduced, but sometimes
+it's possible. You can see how the repr of the ``datetime.date`` object could be used to
+recreate the date object.
+
+The two protocol methods that provide the repr and the str versions of objects are
+``__repr__`` and ``__str__``. They're normal methods on a class, which take ``self``
+as the only parameter and return a string. (Not *print* a string, *return* a string.)
+
+If you looked at the output of the ``fetch`` method from one of our two data-sources in
+exercise 7 you would have seen a list of ``Location`` instances that looked *something*
+like this:
+
+.. code-block:: pycon
+
+    >>> from location_store import NetworkSource
+    >>> source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
+    >>> source.fetch()
+    [<location.Location object at 0x7f0f9272aa20>, <location.Location object at 0x7f0f9272aa90>, <location.Location object at 0x7f0f9272a908>,
+
+One of the things it means when we say that "everything is an object" in Python is that every
+type inherits, more or less indirectly, from the base ``object`` type and inherits some
+behaviour from that. One of the things it inherits is a default implementation of
+the ``__repr__`` method which provides the ``repr`` of objects. But it's not a very useful
+default version.
+
+Can you write more useful versions? Ideally the string returned by ``__repr__`` should
+be something that could recreate the object, similar to ``Location('name', 3.6, 0.1)``.
+The ``__str__`` version could be a bit more human readable, perhaps ``<Location name='name', longitude=...>``.
+
+
+Object Equality
+---------------
+
+Another very useful protocol method to provide is ``__eq__``, which implements the equality
+operator. At the moment two ``Location`` objects that are the same will compare as not-equal
+just because that's the default for all objects.
+
+.. code-block:: pycon
+
+    >>> from location import Location
+    >>> l1 = Location("frimble", 36.1, -17.3)
+    >>> l2 = Location("frimble", 36.1, -17.3)
+    >>> l1 == l2
+    False
+
+What we want is for the equality operator, ``==`` to check of the name, longitude and latitude
+of the two objects are the same and if they are to return ``True``.
+
+The protocol method for overriding the equality operator is the ``__eq__`` method. It takes
+two parameters: ``self`` and the object being compared with (usually callled ``other``). Beware
+though, you can't assume the object being compared with is another ``Location`` - so looking up
+the name or longitude may fail. So you'll need to do some type checking first.
+
+Here's an example object that always compares equal to objects of the same type and always compares
+un-equal to everything else. That should give you a good start:
+
+.. code-block:: pycon
+
+    >>> class Thing:
+    ...     def __eq__(self, other):
+    ...         if type(other) != Thing:
+    ...             return False
+    ...         return True
+    ...
+    >>> thing1 = Thing()
+    >>> thing2 = Thing()
+    >>> thing1 == 3
+    False
+    >>> thing1 == thing2
+    True
+
+
+The Container Protocol
+----------------------
+
+The container protocol is one of the most powerful and useful protocols to implement.
+It allows you to build your own container classes with custom behaviour. The natural
+syntax for users to use with containers is the normal syntax they use with the built-in
+containers like lists and dictionaries, so having your objects be able to be used in the
+same way gives them an "intuitive API" for aspects of their behaviour that are collection
+like.
+
+The main methods, for fetching items, setting items and deleting items are:
+
+* ``__getitem__``
+* ``__setitem__``
+* ``__delitem__``
+
+There are a couple of other useful methods that you can implement that are commonly
+available on containers, to support the ``in`` operator and the ``len`` function.
+
+* ``__contains__``
+* ``__len__``
+
+There's also the ``__iter__`` method to support iteration, something that's useful
+for containers but probably beyond the scope of this tutorial.
+
+Here's an example class that uses thesee. You'll note that it stores the actual data
+in a backing dictionary, and the protocol methods delegate the actual work to the private
+backing store. This is a common practise, custom container types still need to store the
+data or data-structures they represent somewhere and the built-in collections are what
+Python provides for this.
+
+It's also a good example of an object oriented principle called delegation, and perhaps
+even the *Decorator Pattern* from the famous "Design Patterns: Elements of Reusable
+Object Oriented Programming". This is where an object wraps, or "decorates" another object,
+adding in or modifying behaviour of the underlying delegated object. (Not to be confused
+with "decorators" in Python which are not entirely unrelated but not the same thing
+as the design pattern.)
+
+Here's an example of a simple class that can be used in many similar ways to dictionaries,
+but it adds simple logging (just ``print`` calls) to the access methods:
+
+.. code-block:: python
+
+    class Container:
+
+        def __init__(self):
+            self._backing = {}
+
+        def __getitem__(self, name):
+            print("Fetching", name)
+            return self._backing[name]
+
+        def __setitem__(self, name, value):
+            print("Setting", name, "to", value)
+            self._backing[name] = value
+
+        def __delitem__(self, name):
+            print("Deleting", name)
+            del self._backing[name]
+
+        def __contains__(self, name):
+            print("Checking if we have", name)
+            return name in self._backing
+
+        def __len__(self):
+            print("Chcking length")
+            return len(self._backing)
+
+
+Delegation like this, to another object stored on the object, is also an example of composition.
+The ``Container`` class above is comosed with a dictionary (the backing-store). There is a
+"has-a" relationship between the object and a dictionary. This is an alternative to inheritance,
+a topic we'll be looking at shortly.
+
+Having created this class we can now use it in many of the same ways, using the operators
+we have overloaded, as the built-in container classes.
+
+.. code-block:: pycon
+
+    >>> c = Container()
+    >>> len(c)
+    Chcking length
+    0
+    >>> c['foo'] = 'bar'
+    Setting foo to bar
+    >>> c['foo']
+    Fetching foo
+    'bar'
+    >>> 'foo' in c
+    Checking if we have foo
+    True
+    >>> len(c)
+    Chcking length
+    1
+    >>> del c['foo']
+    Deleting foo
+    >>> c['foo']
+    Fetching foo
+    Traceback (most recent call last):
+        ...
+    KeyError: 'foo'
+    >>>
+
+Our ``LocationStore`` class is really a custom container. It contains ``Location`` objects
+which all have a name (the town they represent). Based on the examples above can you implement the
+container protocol methods for ``LocationStore``, so that the following operations succeed:
+
+.. code-block:: pycon
+
+    >>> from location_store import LocationStore, NetworkSource
+    >>> store = LocationStore()
+    >>> source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
+    >>> store.fetch_places(source)
+    >>> store['Redruth']
+    Location('Redruth', -5.226666, 50.233021)
+    >>> len(store)
+    47
+    >>> redruth = store['Redruth']
+    >>> del store['Redruth']
+    >>> 'Redruth' in store
+    False
+    >>> store['Redruth'] = redruth
+

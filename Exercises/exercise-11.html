@@ -1,0 +1,418 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>11 Inheritance, Super and the MRO &#8212; Object Oriented Programmming with Python  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="12 Composition and Delegation" href="exercise-12.html" />
+    <link rel="prev" title="10. Class and Instance Dictionaries" href="exercise-10.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="inheritance-super-and-the-mro">
+<h1>11 Inheritance, Super and the MRO<a class="headerlink" href="#inheritance-super-and-the-mro" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="inheritance-for-is-a-relationship">
+<h2>Inheritance for “is a” Relationship<a class="headerlink" href="#inheritance-for-is-a-relationship" title="Permalink to this headline">¶</a></h2>
+<p>Once place where type checking is built into the language, and “is-a” relationships are
+particularly important, is exception handling. The <code class="docutils literal notranslate"><span class="pre">except</span></code> part of a <code class="docutils literal notranslate"><span class="pre">try...except</span></code>
+block checks the type of the exception.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">123</span> <span class="o">+</span> <span class="s2">&quot;not a number&quot;</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is totally ok&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">This is totally ok</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="mi">123</span> <span class="o">+</span> <span class="s2">&quot;not a number&quot;</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This probably won&#39;t work&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">2</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">unsupported operand type(s) for +: &#39;int&#39; and &#39;str&#39;</span>
+</pre></div>
+</div>
+<p>It’s normal for libraries and frameworks to provide their own exception type(s), which
+you can then catch in your own code. This is done by subclassing the built in <code class="docutils literal notranslate"><span class="pre">Exception</span></code>
+type:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NewException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">raise</span> <span class="n">NewException</span><span class="p">(</span><span class="s2">&quot;An important message&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">except</span> <span class="n">NewException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Caught exception: {!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">Caught exception: NewException(&#39;An important message&#39;,)</span>
+</pre></div>
+</div>
+<p>By inheriting from <code class="docutils literal notranslate"><span class="pre">Exception</span></code> you inherit the default constructor which takes a
+message as an argument.</p>
+</div>
+<div class="section" id="inheritance-for-code-reuse">
+<h2>Inheritance for Code Reuse<a class="headerlink" href="#inheritance-for-code-reuse" title="Permalink to this headline">¶</a></h2>
+<p>One of the most common and effective reasons to use inheritance is for simple code
+re-use. It is common for frameworks or libraries to provide a base class for users
+to inherit from and extend.</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">NetworkSource</span></code> and <code class="docutils literal notranslate"><span class="pre">FileSource</span></code> shared a whole chunk of code in common.
+Although they fetched the data in different ways they both handled lines of data
+the same and created <code class="docutils literal notranslate"><span class="pre">Location</span></code> instances in the same way.</p>
+<p>Can you create a new <code class="docutils literal notranslate"><span class="pre">Source</span></code> base class, that provides a <code class="docutils literal notranslate"><span class="pre">_handle_lines</span></code> method,
+for both <code class="docutils literal notranslate"><span class="pre">FileSource</span></code> and <code class="docutils literal notranslate"><span class="pre">NetworkSource</span></code> to subclass and use?</p>
+<p>The subclasses will look something like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FileSource</span><span class="p">(</span><span class="n">Source</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">h</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_lines</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">NetworkSource</span><span class="p">(</span><span class="n">Source</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;url {!r} failed with status code {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-directions-of-inheritance">
+<h2>The directions of inheritance<a class="headerlink" href="#the-directions-of-inheritance" title="Permalink to this headline">¶</a></h2>
+<p>Python has two different “directions” of inheritance. The first is found in the concept
+of “single inheritance” where a series of classes inherit from a single parent. For
+example, try this example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;A.spam&#39;)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;B.spam&#39;)</span>
+<span class="go">            super().spam()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;C.spam&#39;)</span>
+<span class="go">            super().spam()</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">.</span><span class="vm">__mro__</span>
+<span class="go">(&lt;class &#39;__main__.C&#39;&gt;, &lt;class &#39;__main__.B&#39;&gt;, &lt;class &#39;__main__.A&#39;&gt;, &lt;class &#39;object&#39;&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">spam</span><span class="p">()</span>
+<span class="go">C.spam</span>
+<span class="go">B.spam</span>
+<span class="go">A.spam</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Observe that the __mro__ attribute of class C encodes all of its ancestors in order. When
+you invoke the spam() method, it walks the MRO class-by-class up the hierarchy.</p>
+<p>With multiple inheritance, you get a different kind of inheritance that allows different
+classes to be composed together. Try this example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;Base.spam&#39;)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;X.spam&#39;)</span>
+<span class="go">            super().spam()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Y</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;Y.spam&#39;)</span>
+<span class="go">            super().spam()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Z</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<span class="go">        def spam(self):</span>
+<span class="go">            print(&#39;Z.spam&#39;)</span>
+<span class="go">            super().spam()</span>
+
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Notice that all of the classes above inherit from a common parent Base. However, the
+classes X, Y, and Z are not directly related to each other (there is no inheritance
+chain linking those classes together).</p>
+<p>However, watch what happens in multiple inheritance:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">M</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">):</span>
+<span class="go">        pass</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="o">.</span><span class="vm">__mro__</span>
+<span class="go">(&lt;class &#39;__main__.M&#39;&gt;, &lt;class &#39;__main__.X&#39;&gt;, &lt;class &#39;__main__.Y&#39;&gt;, &lt;class &#39;__main__.Z&#39;&gt;, &lt;class &#39;__main__.Base&#39;&gt;, &lt;class &#39;object&#39;&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">M</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">spam</span><span class="p">()</span>
+<span class="go">X.spam</span>
+<span class="go">Y.spam</span>
+<span class="go">Z.spam</span>
+<span class="go">Base.spam</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Here, you see all of the classes stack together in the order supplied by the subclass.
+Suppose the subclass rearranges the class order:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">N</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">):</span>
+<span class="go">        pass</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">N</span><span class="o">.</span><span class="vm">__mro__</span>
+<span class="go">(&lt;class &#39;__main__.N&#39;&gt;, &lt;class &#39;__main__.Z&#39;&gt;, &lt;class &#39;__main__.Y&#39;&gt;, &lt;class &#39;__main__.X&#39;&gt;, &lt;class &#39;__main__.Base&#39;&gt;, &lt;class &#39;object&#39;&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">N</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">spam</span><span class="p">()</span>
+<span class="go">Z.spam</span>
+<span class="go">Y.spam</span>
+<span class="go">X.spam</span>
+<span class="go">Base.spam</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Here, you see the order of the parents flip around. Carefully pay attention to what
+super() is doing in both cases. It doesn’t delegate to the immediate parent of each
+class—instead, it moves to the next class on the MRO. Not only that, the exact order is
+controlled by the child. This is pretty weird.</p>
+<p>Also notice that the common parent Base serves to terminate the chain of super()
+operations. Specifically, the Base.spam() method does not call any further methods. It
+also appears at the end of the MRO since it is the parent to all of the classes being
+composed together.</p>
+</div>
+<div class="section" id="build-a-value-checker">
+<h2>Build a Value Checker<a class="headerlink" href="#build-a-value-checker" title="Permalink to this headline">¶</a></h2>
+<p>Let’s play with the idea of type validation by creating some mixin classes and see how
+they cooperate with multiple inheritance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># validate.py</span>
+<span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>Now, let’s make some classes for type checking:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Typed</span><span class="p">(</span><span class="n">Validator</span><span class="p">):</span>
+    <span class="n">expected_type</span> <span class="o">=</span> <span class="nb">object</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">expected_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected {cls.expected_type}&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Integer</span><span class="p">(</span><span class="n">Typed</span><span class="p">):</span>
+    <span class="n">expected_type</span> <span class="o">=</span> <span class="nb">int</span>
+
+<span class="k">class</span> <span class="nc">Float</span><span class="p">(</span><span class="n">Typed</span><span class="p">):</span>
+    <span class="n">expected_type</span> <span class="o">=</span> <span class="nb">float</span>
+
+<span class="k">class</span> <span class="nc">String</span><span class="p">(</span><span class="n">Typed</span><span class="p">):</span>
+    <span class="n">expected_type</span> <span class="o">=</span> <span class="nb">str</span>
+</pre></div>
+</div>
+<p>Here’s how you use these classes (Note: the use of &#64;classmethod allows us to avoid the
+extra step of creating instances which we don’t really need):</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Integer</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Integer</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s1">&#39;10&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">check</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected {cls.expected_type}&#39;</span><span class="p">)</span>
+<span class="gr">TypeError</span>: <span class="n">Expected &lt;class &#39;int&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">String</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s1">&#39;10&#39;</span><span class="p">)</span>
+<span class="go">&#39;10&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>You could use the validators in a function. For example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="go">        Integer.check(x)</span>
+<span class="go">        Integer.check(y)</span>
+<span class="go">        return x + y</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">2</span>, in <span class="n">add</span>
+  File <span class="nb">&quot;validate.py&quot;</span>, line <span class="m">11</span>, in <span class="n">check</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected {cls.expected_type}&#39;</span><span class="p">)</span>
+<span class="gr">TypeError</span>: <span class="n">Expected &lt;class &#39;int&#39;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Now, make some more classes for different kinds of domain checking:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Positive</span><span class="p">(</span><span class="n">Validator</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected &gt;= 0&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">NonEmpty</span><span class="p">(</span><span class="n">Validator</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be non-empty&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Where is all of this going? Let’s start composing classes together with multiple
+inheritance like toy blocks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PositiveInteger</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">Positive</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">PositiveFloat</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">Positive</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">NonEmptyString</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">NonEmpty</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Essentially, you’re taking existing validators and composing them together into new ones. Madness! However, let’s use them to validate some things now:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PositiveInteger</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PositiveInteger</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s1">&#39;10&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Expected {cls.expected_type}&#39;</span><span class="p">)</span>
+<span class="gr">TypeError</span>: <span class="n">Expected &lt;class &#39;int&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PositiveInteger</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expected &gt;= 0&#39;</span><span class="p">)</span>
+<span class="gr">ValueError</span>: <span class="n">Must be &gt;= 0</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">NonEmptyString</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">&#39;hello&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">NonEmptyString</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be non-empty&#39;</span><span class="p">)</span>
+<span class="gr">ValueError</span>: <span class="n">Must be non-empty</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>At this point, your head is probably fully exploded. However, the problem of composing
+different bits of code together is one that arises in real-world programs. Cooperative
+multiple inheritance is one of the tools that can be used to organize it.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Object Oriented Programmming with Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="exercise-0.html">0. IDLE &amp; the Interactive Interpreter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-1.html">1. Numbers and Strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-2.html">2. Collections and Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-3.html">3. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-4.html">4. Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-5.html">5. Classes and Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-6.html">6. Types, Properties and Private Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-7.html">7. Interfaces and APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-8.html">8. Operator Overloading and the Python Protocols</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-9.html">9. First Class Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-10.html">10. Class and Instance Dictionaries</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11 Inheritance, Super and the MRO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inheritance-for-is-a-relationship">Inheritance for “is a” Relationship</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inheritance-for-code-reuse">Inheritance for Code Reuse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-directions-of-inheritance">The directions of inheritance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-a-value-checker">Build a Value Checker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-12.html">12 Composition and Delegation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-13.html">13 Modules and Import</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="exercise-10.html" title="previous chapter">10. Class and Instance Dictionaries</a></li>
+      <li>Next: <a href="exercise-12.html" title="next chapter">12 Composition and Delegation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Foord.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exercise-11.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
