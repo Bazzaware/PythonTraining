@@ -15,3 +15,6 @@ print(string.format("Bazza",54))
 1e37 + 27 - 1e37
 import math
 math.fsum (1e37,27,1e27)
+
+
+# Day two

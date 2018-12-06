@@ -10,7 +10,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "stopOnEntry": true
         },
         {
             "name": "Python: Current File (External Terminal)",
@@ -18,13 +19,6 @@
             "request": "launch",
             "program": "${file}",
             "console": "externalTerminal"
-        }
-        //{
-        //    "name": "Python: startup.py",
-        //    "type": "python",
-        //    "request": "launch",
-        //    "program": "${workspaceFolder}/startup.py",
-        //    "args" : ["--port", "1593"]
-        //}   
+        }   
     ]
 }

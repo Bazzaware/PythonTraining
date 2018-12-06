@@ -191,3 +191,26 @@ class Thing:
     def add(self, another_number):
         return self.number + another_number
 
+class ADifferentThing:
+    @property
+    def attribute(self):
+        print("Atribute lookedup")
+        return 3
+
+
+
+thing = ADifferentThing()
+thing.attribute
+
+thing.attribute = 4
+
+#exercise 7
+response = requests.get('http://www.voidspace.org.uk/coords.txt')
+response.status_code
+response.text
+
+# Exercise 9
+
+import math
+items = [abs, math, ValueError]
+items
