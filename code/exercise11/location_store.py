@@ -62,8 +62,7 @@ class LocationStore:
         return name in self._places
 
     def __iter__(self):
-        for item in self._places.values():
-            yield item
+        return iter(self._places)
 
     def fetch_places(self, source):
         places = source.fetch()

@@ -1,0 +1,168 @@
+15 Closures and Higher Order Functions
+=======================================
+
+Mapping
+-------
+
+One of the most common operations in functional programming is the map() operation that
+maps a function to the values in a sequence. Python has a built-in map() function that
+does this. For example:
+
+.. code-block:: pycon
+
+        >>> nums = [1,2,3,4]
+        >>> squares = map(lambda x: x*x, nums)
+        >>> for n in squares:
+                print(n)
+
+        1
+        4
+        9
+        16
+        >>>
+
+map() produces an iterator so if you want a list, you’ll need to create it explicitly:
+
+.. code-block:: pycon
+
+        >>> squares = list(map(lambda x: x*x, nums))
+        >>> squares
+        [1, 4, 9, 16]
+        >>>
+
+
+Closures
+--------
+
+Closures are a very powerful language feature. They allow you to create specialised
+functions based on parameters.
+
+Try it with a ``make_adder`` function that creates new "adders".
+
+.. code-block:: pycon
+
+        >>> def make_adder(x):
+        ...   def adder(y):
+        ...     return x + y
+        ...   return adder
+        ...
+        >>> add3 = make_adder(3)
+        >>> add3
+        <function make_adder.<locals>.adder at 0x7f42509d5950>
+        >>> add4 = make_adder(4)
+        >>> add4
+        <function make_adder.<locals>.adder at 0x7f42509d59d8>
+        >>> add3(7)
+        10
+        >>> add3(6)
+        9
+        >>> add4(99)
+        103
+        >>>
+
+This is an example of partial application.
+
+In previous exercises we added type checking to fields of our ``Location`` class.
+
+One way of doing this (for both get and set) is with properties that look like this:
+
+.. code-block:: python
+
+
+    class Location:
+
+        def __init__(self, name, longitude, latitude):
+            self.name = name
+            self.longitude = longitude
+            self.latitude = latitude
+
+        @property
+        def longitude(self):
+            return self._longitude
+        @longitude.setter
+        def longitude(self, value):
+            if not isinstance(value, float):
+                raise TypeError('Expected type float')
+            self._longitude = value
+
+        @property
+        def latitude(self):
+            return self._latitude
+        @latitude.setter
+        def latitude(self, value):
+            if not isinstance(value, float):
+                raise TypeError('Expected type float')
+            self._latitude = value
+
+        @property
+        def name(self):
+            return self._name
+        @name.setter
+        def name(self, value):
+            if not isinstance(value, str):
+                raise TypeError('Expected type str')
+            self._name = value
+
+There's a lot of shared code there in the three properties. Can you write a
+"property generator" function that creates properties that do type checking
+based on a parameter.
+
+The result should allow this code to work:
+
+.. code-block:: python
+
+    class Location:
+        name = typedproperty('name', str)
+        longitude = typedproperty('longitude', float)
+        latitude = typedproperty('latitude', float)
+
+        def __init__(self, name, longitude, latitude):
+            self.name = name
+            self.longitude = longitude
+            self.latitude = latitude
+
+As a hint, notice the property code uses "private" (by convention) variables "_name",
+"_longitude" and "_latitude" with a leading underscore. You can use ``setattr(name, value)``
+to set an arbitrary attribute on an object where the attribute name is stored in a
+variable.
+
+Closures as a data structure
+----------------------------
+
+One potential use of closures is as a tool for data encapsulation. Try this example:
+
+.. code-block:: python
+
+        def counter(value):
+            def incr():
+                nonlocal value
+                value += 1
+                return value
+
+            def decr():
+                nonlocal value
+                value -= 1
+                return value
+
+            return incr, decr
+
+This code defines two inner functions that manipulate a value. Try it out:
+
+.. code-block:: python
+
+        >>> up, down = counter(0)
+        >>> up()
+        1
+        >>> up()
+        2
+        >>> up()
+        3
+        >>> down()
+        2
+        >>> down()
+        1
+        >>>
+
+Notice how there is no class definition involved here. Moreover, there is no global
+variable either. Yet, the up() and down() functions are manipulating some "behind the
+scenes" value. It’s fairly magical.

@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="6. Types, Properties and Private Members" href="exercise-6.html" />
@@ -98,7 +99,7 @@ call it an initializer rather than a constructor.</p>
 </div>
 <p>When <code class="docutils literal notranslate"><span class="pre">Person</span></code> is instantiated a name is passed in. Our initializer method stores the name
 as an “attribute” on the instance. So although separate instances share the same method
-they have different instance atttributes. Every instance has its own data
+they have different instance attributes. Every instance has its own data
 When we call the <code class="docutils literal notranslate"><span class="pre">say_hello</span></code> method we don’t need to explicitly pass in the <code class="docutils literal notranslate"><span class="pre">self</span></code>
 parameter. Python does this for us. When we call <code class="docutils literal notranslate"><span class="pre">jane.say_hello()</span></code> self refers to jane
 (unsurprisingly).</p>
@@ -156,7 +157,7 @@ and deleting of attributes. Normally, these are accessed via the dot (.) like th
 <p>The three operations are also available as functions. For example:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">getattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>            <span class="c1"># Same as l.name</span>
 <span class="go">&#39;Boulmer&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="mf">55.6</span><span class="p">)</span>      <span class="c1"># Same as l.longitude = 55.6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="mf">55.6</span><span class="p">)</span>      <span class="c1"># Same as l.longitude = 55.6</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">delattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">)</span>          <span class="c1"># Same as del l.longitude</span>
 <span class="go">&gt;&gt;&gt;</span>
 </pre></div>
@@ -179,7 +180,7 @@ user-defined attributes:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="s1">&#39;Boulmer&#39;</span><span class="p">,</span> <span class="mf">55.422272</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.579536</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">name Boulmer</span>
 <span class="go">longitude 55.422272</span>
@@ -226,6 +227,8 @@ user-defined attributes:</p>
 <li class="toctree-l1"><a class="reference internal" href="exercise-11.html">11 Inheritance, Super and the MRO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise-12.html">12 Composition and Delegation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise-13.html">13 Modules and Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-14.html">14. Abstract Base Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise-14.html#the-collections-abstract-base-classes">The collections Abstract Base Classes</a></li>
 </ul>
 
 <div class="relations">
@@ -249,14 +252,6 @@ user-defined attributes:</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -265,8 +260,8 @@ user-defined attributes:</p>
       &copy;2018, Michael Foord.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/exercise-5.txt"

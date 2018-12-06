@@ -78,7 +78,7 @@ call it an initializer rather than a constructor.
 
 When ``Person`` is instantiated a name is passed in. Our initializer method stores the name
 as an "attribute" on the instance. So although separate instances share the same method
-they have different instance atttributes. Every instance has its own data
+they have different instance attributes. Every instance has its own data
 When we call the ``say_hello`` method we don't need to explicitly pass in the ``self``
 parameter. Python does this for us. When we call ``jane.say_hello()`` self refers to jane
 (unsurprisingly).
@@ -155,7 +155,7 @@ The three operations are also available as functions. For example:
 
   >>> getattr(l, 'name')            # Same as l.name
   'Boulmer'
-  >>> setattr(s, 'longitude', 55.6)      # Same as l.longitude = 55.6
+  >>> setattr(l, 'longitude', 55.6)      # Same as l.longitude = 55.6
   >>> delattr(l, 'longitude')          # Same as del l.longitude
   >>>
 
@@ -182,7 +182,7 @@ user-defined attributes:
     >>> l = Location('Boulmer', 55.422272, -1.579536)
     >>> fields = ['name','longitude','latitude']
     >>> for name in fields:
-    ...     print(name, getattr(s, name))
+    ...     print(name, getattr(l, name))
     ...
     name Boulmer
     longitude 55.422272

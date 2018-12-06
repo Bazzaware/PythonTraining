@@ -18,3 +18,5 @@ Object Oriented Programming with Python
   exercise-11
   exercise-12
   exercise-13
+  exercise-14
+  exercise-15

@@ -1,0 +1,87 @@
+14. Abstract Base Classes
+=========================
+
+In the slides we saw the creation of a ``PluginBase`` class using the metaclass ``abc.ABCMeta``. The concrete implementation
+was registered using ``PluginBase.register`` as a class decorator.
+
+.. code-block:: python
+
+    import abc
+
+
+    class PluginBase(metaclass=abc.ABCMeta):
+
+        @abc.abstractmethod
+        def load(self, input):
+            """Retrieve data from the input source
+            and return an object.
+            """
+
+        @abc.abstractmethod
+        def save(self, output, data):
+            """Save the data object to the output."""
+
+
+
+    @PluginBase.register
+    class RegisteredImplementation:
+
+        def load(self, input):
+            return input.read()
+
+        def save(self, output, data):
+            return output.write(data)
+
+
+    if __name__ == '__main__':
+        print('Subclass:', issubclass(RegisteredImplementation,
+                                      PluginBase))
+        print('Instance:', isinstance(RegisteredImplementation(),
+                                      PluginBase))
+
+
+There are alternative approaches that are slightly simpler using inheritance,
+with the restriction that it is then harder for your abstract or concrete 
+classes to inherit from anything else (without involving multiple inheritance).
+
+Your abstract base class can inherit from ``abc.ABC`` and instead of being registered
+the concrete implementation can just inherit directly from ``PluginBase``. Modify the
+example and verify that it still works.
+
+Of course when the concrete implementation does actually inherit from the abstract
+base class it's much less impressive that the ``isinstance`` and ``issubclass`` checks
+pass! The advantage of using the ``abc`` module to specify the interface is that if you
+don't implement all of the methods defined in the interface then instantiating your class
+will fail and tell you the problem. Try deleting either the ``load`` or the ``save`` method
+and see what happens.
+
+The ``abc`` module also provides ways of including properties and class methods in your interface definition.
+See the `module reference <https://docs.python.org/3.6/library/abc.html>`_ for all the gory details.
+
+The collections Abstract Base Classes 
+=====================================
+
+The `collections <https://docs.python.org/3/library/collections.abc.html>`_ module
+contains some useful predefined abstract base classes for the various different container types in Python; like
+sequences and mapping types (lists and dictionaries). You can register your own classes as implementing
+these interfaces and then they will correctly pass an ``isinstance``  check against those interfaces.
+
+So if you have code that needs a "dictionary like object" and you want to do type checking, consider using
+``isinstance(obj, Mapping)`` instead of ``isinstance(obj, dict)``. This allows your code to work with
+any object registered as a mapping type.
+
+In addition to this you can inherit from these interface definitions, and providing you implement the 
+required interface methods you will get some extra methods associated with this interface for free!
+The abstract base classes can be used as mixin classes.
+
+For the ``Mapping`` type you have to implement ``__getitem__``, ``__iter__`` and ``__len__`` and you get
+``__contains__``, ``keys``, ``items``, ``values``, ``get``, ``__eq__``, and ``__ne__`` for free!
+
+If you inherit from ``MutableMapping`` and additionally provide ``__setitem__`` and ``__delitem__`` then you
+also get ``pop``, ``popitem``, ``clear``, ``update``, and ``setdefault``.
+
+Our ``LocationStore`` is a mutable mapping type. Modify the implementation to inherit from ``MutableMapping``.
+You can remove our previous implementation of ``__contains__`` as we now get it for free.
+
+A ``LocationStore`` instance will now pass an ``isinstance`` check as a ``Mapping`` or ``MutableMapping`` type
+and it should have a whole bunch of (maybe) useful extra methods.

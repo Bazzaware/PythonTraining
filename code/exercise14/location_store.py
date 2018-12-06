@@ -41,8 +41,9 @@ class NetworkSource(Source):
 
 from math import cos, asin, sqrt
 from formatters import create_formatter
+from collections import MutableMapping
 
-class LocationStore:
+class LocationStore(MutableMapping):
 
     def __init__(self, formatter_name):
         self._formatter = create_formatter(formatter_name)
@@ -59,9 +60,6 @@ class LocationStore:
 
     def __len__(self):
         return len(self._places)
-
-    def __contains__(self, name):
-        return name in self._places
 
     def __iter__(self):
         return iter(self._places)
@@ -105,3 +103,11 @@ if __name__ == '__main__':
     store.fetch_places(source)
     print(store.distance("Marlow", "Redruth"))
     store.display_locations()
+    from collections import Mapping
+    print("isinstance Mapping:", isinstance(store, Mapping))
+    print("isinstance MutableMapping:", isinstance(store, MutableMapping))
+    print(list(store.keys()))
+
+
+
+    
