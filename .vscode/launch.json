@@ -10,8 +10,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
-            "stopOnEntry": true
+            "console": "integratedTerminal"
+            
         },
         {
             "name": "Python: Current File (External Terminal)",

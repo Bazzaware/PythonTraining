@@ -1,19 +1,22 @@
 from location import Location
 
 from math import cos, asin, sqrt
+from formatter import create_formatter
+
 import requests
 
 class LocationStore:
 
-    def __init__(self):
+    def __init__(self, formatter_name):
+        self._formatter = create_formatter(formatter_name)
         self._places = {}
 
     def __getitem__(self, name):
-        print("Fetching name" , name)
+        #print("Fetching name" , name)
         return self._places[name]
 
     def __setitem__(self, name, value):
-        print("Setting name ",name)
+       # print("Setting name ",name)
         self._places[name] = value
 
     def __delitem__(self, name):
@@ -56,6 +59,14 @@ class LocationStore:
         a = 0.5 - cos((lat2 - lat1) * p)/2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
         return 12742 * asin(sqrt(a))
 
+    def display_locations(self):
+        self._formatter.headings(['Name', 'Longitude', 'Latitude'])
+        for name in self.all_names():
+            place = self[name]
+            rowdata = [place.name,place.longitude,place.latitude]
+            self._formatter.row(rowdata)
+
+
 class Source():
     def fetch(self):
         raise NotImplementedError
@@ -92,6 +103,11 @@ class FileSource(Source):
             return self._handle_lines(contents)
 
 if __name__ == '__main__':
-    store = LocationStore()
-    source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
+    #store = LocationStore("html")
+    store = LocationStore("txt")
+    #source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
+    source = FileSource("data/coords.txt")
     store.fetch_places(source)
+    print(store.distance("Marlow", "Redruth"))
+    store.display_locations()
+    

@@ -18,3 +18,8 @@ math.fsum (1e37,27,1e27)
 
 
 # Day two
+# Composition
+#  Deep copy will copy a value to a new memory location
+#  super will call all classes in the inheritance
+
+# Mixing classes can can only be used when inherited and not stand alone.
