@@ -1,22 +1,59 @@
+import requests
 from location import Location
+
+
+class Source:
+    def fetch(self):
+        raise NotImplementedError
+
+    def _handle_lines(self, lines):
+        places = []
+        for line in lines:
+            line = line.rstrip()
+            if line == "":
+                continue
+            name, longitude, latitude = line.split('\t')
+            places.append(Location(name, float(longitude), float(latitude)))
+        return places
+
+
+class FileSource(Source):
+    def __init__(self, filename):
+        self.filename = filename
+
+    def fetch(self):
+        with open(self.filename) as h:
+            return self._handle_lines(h)
+
+
+class NetworkSource(Source):
+    def __init__(self, url):
+        self.url = url
+
+    def fetch(self):
+        response = requests.get(self.url)
+        if response.status_code != 200:
+            raise Exception("url {!r} failed with status code {}".format(self.url, response.status_code))
+        lines = response.text.splitlines()
+        return self._handle_lines(lines)
+
+
 
 from math import cos, asin, sqrt
 from formatter import create_formatter
+from collections import MutableMapping
 
-import requests
-
-class LocationStore:
+# class LocationStore()
+class LocationStore(MutableMapping):
 
     def __init__(self, formatter_name):
         self._formatter = create_formatter(formatter_name)
         self._places = {}
 
     def __getitem__(self, name):
-        #print("Fetching name" , name)
         return self._places[name]
 
     def __setitem__(self, name, value):
-       # print("Setting name ",name)
         self._places[name] = value
 
     def __delitem__(self, name):
@@ -29,8 +66,7 @@ class LocationStore:
         return name in self._places
 
     def __iter__(self):
-        for item in self._places.values():
-            yield item
+        return iter(self._places)
 
     def fetch_places(self, source):
         places = source.fetch()
@@ -62,52 +98,17 @@ class LocationStore:
     def display_locations(self):
         self._formatter.headings(['Name', 'Longitude', 'Latitude'])
         for name in self.all_names():
-            place = self[name]
-            rowdata = [place.name,place.longitude,place.latitude]
-            self._formatter.row(rowdata)
+            self._formatter.row(self[name])
 
-
-class Source():
-    def fetch(self):
-        raise NotImplementedError
-
-    def _handle_lines(self, Response):
-        places = []
-        for line in Response:
-            line = line.rstrip()
-            if line == "":
-                continue
-            name, latitude, longitude = line.split('\t')
-            places.append(Location(name, float(longitude), float(latitude)))
-        return places
-    
-
-class NetworkSource(Source):
-    def __init__(self, url):
-        self.url = url
-
-    def fetch(self):
-        response = requests.get(self.url)
-        if response.status_code != 200:
-            raise Exception("url {!r} failed with status code {}".format(self.url, response.status_code))
-        linesFromSource = response.text.splitlines()
-        return self._handle_lines(linesFromSource)
-        
-        
-class FileSource(Source):
-    def __init__(self, filename):
-        self.filename = filename
-
-    def fetch(self):
-        with open(self.filename) as contents:
-            return self._handle_lines(contents)
 
 if __name__ == '__main__':
-    #store = LocationStore("html")
+    source = NetworkSource('http://voidspace.org.uk/coords.txt')
     store = LocationStore("txt")
-    #source = NetworkSource('http://www.voidspace.org.uk/coords.txt')
-    source = FileSource("data/coords.txt")
     store.fetch_places(source)
     print(store.distance("Marlow", "Redruth"))
-    store.display_locations()
-    
+    #store.display_locations()
+    from collections import Mapping
+    print("isinstance Mapping:", isinstance(store, Mapping))
+    print("isinstance MutableMapping:", isinstance(store, MutableMapping))
+    print(list(store.keys()))
+

@@ -23,3 +23,4 @@ math.fsum (1e37,27,1e27)
 #  super will call all classes in the inheritance
 
 # Mixing classes can can only be used when inherited and not stand alone.
+# Dependancy alternative to Dependancey injection

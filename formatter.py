@@ -1,3 +1,4 @@
+
 class Formatter:
     def headings(self, headers):
         '''
@@ -10,6 +11,34 @@ class Formatter:
         Emit a single row of table data
         '''
         raise NotImplementedError()
+
+
+class TextFormatter(Formatter):
+    '''
+    Output data in plain-text format.
+    '''
+    def headings(self, headers):
+        for h in headers:
+            print('{:>20}'.format(h), end=' ')
+        print()
+        print(('-'*20 + ' ')*len(headers))
+
+    def row(self, rowdata):
+        for d in rowdata:
+            print('{:>20}'.format(d), end=' ')
+        print()
+
+
+class CSVFormatter(Formatter):
+    '''
+    Output data in CSV format.
+    '''
+    def headings(self, headers):
+        print(','.join(headers))
+
+    def row(self, rowdata):
+        print(','.join(rowdata))
+
 
 class HTMLFormatter(Formatter):
     '''
@@ -26,21 +55,6 @@ class HTMLFormatter(Formatter):
         for d in rowdata:
             print('<td>{}</td>'.format(d), end='')
         print('</tr>')
-
-class TextFormatter(Formatter):
-    '''
-    Output data in plain-text format.
-    '''
-    def headings(self, headers):
-        for h in headers:
-            print('{:>20}'.format(h), end=' ')
-        print()
-        print(('-'*20 + ' ')*len(headers))
-
-    def row(self, rowdata):
-        for d in rowdata:
-            print('{:>20}'.format(d), end=' ')
-        print()
 
 
 def create_formatter(name):
